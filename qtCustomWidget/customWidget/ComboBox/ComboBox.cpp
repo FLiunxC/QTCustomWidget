@@ -6,6 +6,7 @@
 #include<QDebug>
 #include "QNoFocusFrameDelegate.h"
 #include "HelpClass.h"
+#include <QApplication>
 
 ComboBox::ComboBox(QWidget *parent) : QComboBox(parent)
 {
@@ -46,8 +47,6 @@ void ComboBox::initComBox()
           this->setView(m_listwidget);
      }
 
-
-
      connect(m_listwidget, &QListWidget::currentItemChanged , this, &ComboBox::currentItemChanged_slot);
 
 }
@@ -57,6 +56,10 @@ void ComboBox::addItemTextData(QString text, int index)
     if(m_listwidget != nullptr){
         ComboBoxItem* item = new ComboBoxItem(this);
         item->setLabelContent(text, index);
+        if(index == 0)
+        {
+            m_currentItem = text;
+        }
         QListWidgetItem* widgetItem = new QListWidgetItem(m_listwidget);
         m_listwidget->setItemWidget(widgetItem, item);
     }
@@ -70,6 +73,10 @@ void ComboBox::setCurrentItem(QString item)
 void ComboBox::setBackgroundColor(QString color)
 {
     m_backGroundColor = color;
+
+    this->setProperty("boxbackground", m_backGroundColor);
+    this->setStyle(QApplication::style());
+
     m_update = true;
 }
 
@@ -89,6 +96,7 @@ void ComboBox::setInitStyleSheet(QString background)
     }
     this->setProperty("boxbackground", background);
     this->setStyleSheet(styleSheet);
+    this->setStyle(QApplication::style());
 }
 
 
@@ -100,12 +108,15 @@ void ComboBox::mouseMoveEvent(QMouseEvent *event)
 void ComboBox::enterEvent(QEvent *event)
 {
     this->setCursor(Qt::PointingHandCursor);
+    event->accept();
 }
 
 void ComboBox::leaveEvent(QEvent *event)
 {
      this->setCursor(Qt::ArrowCursor);
+    event->accept();
 }
+
 
 void ComboBox::currentItemChanged_slot(QListWidgetItem *current, QListWidgetItem *previous)
 {

@@ -43,6 +43,11 @@ public:
     void initComBox();
 
     //必须调用initComBox后才能调用该方法赋值Item数据
+    /**
+     * @brief addItemTextData 添加ComboBox中子Item的信息
+     * @param text 添加的文本信息
+     * @param index 当前添加的索引值，从0开始
+     */
     void addItemTextData(QString text, int index);
 
     //设置当前comboBox选中的item名称，出来时候默认是空的
@@ -56,11 +61,12 @@ public:
     //设置默认样式表 background -- 为blue代表蓝色背景，字体为白色； 为white代表白色背景，字体为黑色
     void setInitStyleSheet(QString background);
 
-
 protected:
     void mouseMoveEvent(QMouseEvent *event);
+
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
+
 signals:
     void sigCurrentIndexChange(QString text, int index);
 public slots:
