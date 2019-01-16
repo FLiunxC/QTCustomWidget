@@ -6,6 +6,12 @@
 * @author: Fu_Lin
 * @date:
 * @description:左icon，中文本，右icon， 可多次点击
+* 例子：使用方式：
+*  pushButton->setButtonText("Filter");
+    pushButton->setLeftIcon(":/img/windows/workList_filter.png", QSize(13,12));
+    pushButton->setRightIcon(":/img/windows/arrow_downWhite.png", QSize(8,5));
+    pushButton->setBackgroundColor("#4BA4F2");
+    pushButton->setFontColor("white");
 */
 
 
@@ -24,7 +30,11 @@ public:
 
     //设置是否有点击效果
     void setClickEffect(bool clickEffect);
-    //设置背景图片
+    /**
+     * @brief setBackgroundImage  设置button的背景图片和相关图片大小
+     * @param imgPath 图片的路径
+     * @param size 图片的大小
+     */
     void setBackgroundImage(QString imgPath, QSize size = QSize());
     //设置背景是否透明，不影响图片的设置，单纯的背景透明
     void setButtonTransparency(bool isTransparency);
@@ -35,7 +45,12 @@ public:
     //设置按钮文本
     void setButtonText(const QString &text);
     void setText(const QString &text);
-    //设置按钮左边的图标
+
+    /**
+     * @brief setLeftIcon  设置button的设置按钮左边的图标和对应大小
+     * @param Licon 图片的路径
+     * @param size 图片的大小
+     */
     void setLeftIcon(const QString &Licon, const QSize &size = QSize(0, 0));
     //设置按钮右边的图标
     void setRightIcon(const QString &Ricon, const QSize &size = QSize(0, 0));
