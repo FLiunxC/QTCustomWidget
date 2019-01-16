@@ -13,6 +13,8 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QSettings>
+#include <QVariant>
+#include <QApplication>
 
 QJsonObject HelpClass::m_jsonObject;
 
@@ -64,6 +66,38 @@ bool HelpClass::isDirExist(QString fullPath)
     {
         bool ok = dir.mkpath(fullPath);//创建多级目录
         return ok;
+    }
+}
+
+QString HelpClass::bytesToKB(qint64 size)
+{
+    qint64 rest = 0.00;
+    if(size < 1024)
+    {
+        return QString::number(size, 'f', 2) + "B";
+    }
+    else
+    {
+        size /= 1024;
+    }
+    if(size < 1024)
+    {
+        return QString::number(size, 'f', 2) + "KB";
+    }
+    else
+    {
+        rest = size % 1024;
+        size /= 1024;
+    }
+    if(size < 1024)
+    {
+        size = size * 100;
+        return QString::number((size / 100), 'f', 2) + "." + QString::number((rest * 100 / 1024 % 100), 'f', 2) + "MB";
+    }
+    else
+    {
+        size = size * 100 / 1024;
+        return QString::number((size / 100), 'f', 2) + "." + QString::number((size % 100), 'f', 2) + "GB";
     }
 }
 
@@ -180,6 +214,83 @@ QString HelpClass::tojsonArray(QJsonArray jsonArray)
     return strJson;
 }
 
+bool HelpClass::generalJsonParse(QJsonDocument jsonDocument, QMap<QString, QString> &jsonkeyMap, QString headKey, int headValue)
+{
+    if(jsonDocument.isObject())
+    {
+         QJsonObject object = jsonDocument.object();
+
+        if(object.contains(headKey))
+        {
+            if(object.take(headKey)== headValue)
+            {
+                   QStringList keyList = jsonkeyMap.keys();
+
+                   for(QString key : keyList)
+                   {
+                       if(object.contains(key))
+                       {
+                           QJsonValue value = object.value(key);
+                           QVariant varVariant = value.toVariant();
+                           jsonkeyMap[key] = varVariant.toString();
+                       }
+                   }
+                   return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    if(jsonDocument.isArray())
+    {
+        QJsonArray array = jsonDocument.array();
+        for(int i = 0; i < array.size(); i++)
+        {
+            QJsonValue value =  array.at(i);
+
+            if(value.isObject())
+            {
+                QJsonObject object = array.at(i).toObject();
+                if(object.contains(headKey))
+                {
+                    if(object.take(headKey)== headValue)
+                    {
+                           QStringList keyList = jsonkeyMap.keys();
+
+                           for(QString key : keyList)
+                           {
+                               if(object.contains(key))
+                               {
+                                   QJsonValue value = object.value(key);
+                                   QVariant varVariant = value.toVariant();
+                                   jsonkeyMap[key] = varVariant.toString();
+                               }
+                           }
+                           return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+        }
+    }
+
+    return false;
+}
+
 QString HelpClass::getUuid()
 {
     return  QUuid::createUuid().toString();
@@ -228,6 +339,9 @@ bool HelpClass::writeDataToFile(QList<QMap<QString, QStringList> > mapList, QStr
     file->close();
 
     delete file;
+
+
+    return true;
 }
 
 QList<QMap<QString, QStringList> > HelpClass::ReadDataFromFile(QString Path)
@@ -347,8 +461,12 @@ QMap<QString, QString> HelpClass::readSettingFile(QString groupName, QString fil
 //加载qss文件
 QString HelpClass::loaderQSSFile(const QString & qssFileName)
 {
-
-    QFile file(QString(":/qss/%1.qss").arg(qssFileName));
+    QString openfileName = qssFileName;
+    if(!qssFileName.startsWith(":/"))
+    {
+        openfileName = QString(":/qss/%1.qss").arg(qssFileName);
+    }
+    QFile file(openfileName);
     if(!file.open(QIODevice::ReadOnly))
     {
         qCritical("QSS File '%s' does not open!", qUtf8Printable(qssFileName));
@@ -359,4 +477,12 @@ QString HelpClass::loaderQSSFile(const QString & qssFileName)
     file.close();
 
     return styleSheet;
+}
+
+void HelpClass::setGlobalStyleSheet(const QString &qssFileName)
+{
+    QString qssFile = loaderQSSFile(qssFileName);
+    qApp->setStyleSheet(qssFile);
+
+    return;
 }

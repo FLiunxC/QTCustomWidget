@@ -11,10 +11,11 @@
 #include <QObject>
 #include <QByteArray>
 
-#define DefaultKEY "1ed中.@"
+#define DefaultKEY "1ed中.@"  //加密會用到
 #define AgencyFileName "agency.dat"
 
 class QJsonObject;
+class QJsonDocument;
 class HelpClass : public QObject
 {
     Q_OBJECT
@@ -30,7 +31,7 @@ public:
     static QByteArray GetEncrypt(const QByteArray plaintextStr, QByteArray key ="");
 
     /**
-      * @brief GetEncrypt 获取加密后的密文重载函数
+      * @brief GetEncrypt 获取加密后的密文--重载函数
       * @param plaintextStr 加密前的明文 QString类型
       * @param key  加密需要的钥匙，解密也要用到，建议不填写，使用默认自带钥匙
       * @return 已加密成功的密文
@@ -53,8 +54,17 @@ public:
     static bool isDirExist(QString fullPath);
 
     /**
+     * @brief bytesToKB  字节 转换为B KB MB GB
+     * @param bytes 需要转换的字节数
+     * @return 转换成功的对应KB, 大小，默认保留两位小数
+     */
+    static QString bytesToKB(qint64 size);
+
+    /**
      * @brief writeDataToFile 将数据写入到文件，数据格式采用QList<QMap>类型
-     * @return
+     * @param mapList 数据的map类型，直接将map数据写入文件，取出来的时候也是对应的时候也是对应map类型
+     * @param Path 写入文件的路径名称，建议为空，使用默认参数
+     * @return true 写入成功，false 写入失败
      */
     static bool writeDataToFile(QList<QMap<QString , QStringList> > mapList, QString Path = "");
 
@@ -124,6 +134,16 @@ public:
    static QString tojsonArray(QJsonArray);
 
    /**
+    * @brief generalJsonParse 通用的json解析方法 ,只能支持一级json解析，数组型的暂不支持
+    * @param jsonDocument   需要解析的QJsonDocument,由外面调用传入
+    * @param jsonkeyMap       需要解析的json中的Key值，首次传入，value应该为空，调用完成后，再根据key取出对应的value
+    * @param headKey            json需要解析的头字段key，默认为code，如果code值不对，直接返回false，Map不做操作，code值请参考headValue
+    * @param headValue          json需要解析的头字段key匹配的正确返回值， 默认正确为0
+    * @return true 解析成功，false 解析失败
+    */
+   static bool generalJsonParse(QJsonDocument, QMap<QString ,QString> &jsonkeyMap, QString headKey = "code", int headValue = 0);
+
+   /**
     * @brief getUuid 获取Uuid唯一标识符 ，经测试不会重复出现
     * @return
     */
@@ -137,11 +157,17 @@ public:
 
    /**
     * @brief loaderQssFile 加载QSS样式表文件
-    * @param qssFileName  根据传送过来的qss文件名称加载不同的路径文件
+    * @param qssFileName  根据传送过来的qss文件名称加载不同的路径文件（可以传全路径或者当前的文件名）
     * @return 返回已经读取成功的qqs文件数据，返回空代表打开文件失败
     */
    static QString loaderQSSFile(const QString &qssFileName);
 
+   /**
+    * @brief setGlobalStyleSheet 设置全局样式表格式
+    * @param qssFileName 需要设置的样式表文件
+    * @return 无
+    */
+   static void setGlobalStyleSheet(const QString &qssFileName);
    /**
     * @brief writeSettingFile 将相关数据写入配置文件
     * @param mapSettingData 需要写入的map数据
