@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/qss">
+        <file>ComboBox.qss</file>
+        <file>Label.qss</file>
+        <file>ScrollBar.qss</file>
+        <file>qssStyle.qss</file>
+    </qresource>
+</RCC>

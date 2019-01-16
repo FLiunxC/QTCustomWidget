@@ -1,0 +1,10 @@
+QLabel[labelBackground="white"]{
+background-color:#ffffff;
+color:#4ba4f2;
+text-align:left;
+}
+QLabel[labelBackground="green"]{
+background-color:#F7F7F7;
+color:#4ba4f2;
+text-align:left;
+}

@@ -1,0 +1,25 @@
+QScrollBar{
+background:rgb(247,247,247); 
+width:8px;
+}
+QScrollBar::handle{
+background:rgb(193,205,211);
+border:1px solid rgb(193,205,211);
+border-radius:4px;
+}
+QScrollBar::handle:hover{
+background:rgb(160,169,175); 
+border:1px solid rgb(160,169,175); 
+border-radius:4px; 
+}
+QScrollBar::handle:pressed{
+background:rgb(160,169,175);
+border:1px solid rgb(160,169,175);
+border-radius:4px;
+}
+QScrollBar::sub-line{
+background:rgb(247,247,247);
+}
+QScrollBar::add-line{
+background:rgb(247,247,247);
+} 

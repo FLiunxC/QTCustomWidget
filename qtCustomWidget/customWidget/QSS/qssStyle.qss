@@ -1,0 +1,158 @@
+/**
+    用于QWidget提升控件， 也作用于消掉QListWidget的黑边框
+*/
+QWidget#widget_LeftOrder_PanelListWidget, QWidget#widget_LeftOrder_showContentWidget, QWidget#widget_LeftOrder_orderInfoList,
+QWidget#QN_LWordOrderInfoListWidgetItem{
+
+        background:rgba(255,255,255,1);
+        border-radius:2px 0px 0px 2px;
+}
+
+/**
+    用于QWidget提升控件， 作用于边框线的下边框显示，其他三边框取消
+*/
+QWidget#Label_LeftOrder_PanelTitle, QWidget#QN_LWordOrderInfoListWidgetItem{
+        background-color:rgba(255,255,255,1);
+        border-radius:2px 0px 0px 2px;
+        border-bottom:1px solid rgba(234,234,234,1);
+}
+
+/**
+    用于QWidget提升控件， 作用于边框线的显示
+*/
+QWidget#widget_Leftorder_FiliterInfo{
+background:rgba(250,250,250,1);
+border-radius:2px 0px 2px 0px;
+border:1px solid rgba(234,234,234,1);
+}
+
+/**
+ 用于QLabel的颜色设置
+*/
+QLabel#label_orderTitle, #label_orderPriority, #label_orderStatus, #label_orderAcceptPeople,#label_orderChannel, #label_orderUpdateTime{
+    color:rgba(178,178,178,1);
+}
+
+/**
+用于QCheckBox的文本颜色设置
+*/
+QCheckBox#checkBox_orderNum{
+     color:rgba(178,178,178,1);
+}
+
+/*
+QWidget#widget_LeftOrder_PanelListWidget{
+        background-color:#FFFFFF;
+        border:0px;
+}*/
+
+/**
+    QListWidget中Item的QSS定制选中和非选中时的颜色显示
+*/
+QListWidget#widget_LeftOrder_PanelListWidget::item:selected{
+        background:#F7F7F7;
+
+}
+QListWidget#widget_LeftOrder_PanelListWidget::item:selected:!active{
+        active{
+        background:#FFFFFF;
+        }
+}
+QListWidget::item:hover {
+    background: #BDD7FD;
+}
+
+QListWidget#widget_LeftOrder_PanelListWidget{outline:0px;}
+
+/**
+    QLineEdit 的定制
+*/
+QLineEdit{
+    background:rgba(255,255,255,1);
+    border-radius:2px;
+    border:1px solid rgba(234,234,234,1);
+}
+
+QLineEdit:enabled:focus {
+    border:1px solid #AAAAAA;
+}
+/*
+QPushButton{
+    width:20;
+    height:32;
+border-radius:2px;
+border:1px solid rgba(222,222,222,1);
+background-color:white;
+}*/
+
+/**
+作用于滚动条的显示qss样式
+*/
+QScrollBar{
+        background:rgb(247,247,247);
+        width:8px;
+}
+QScrollBar::handle{
+        background:rgb(193,205,211);
+        border:1px solid rgb(193,205,211);
+        border-radius:4px;
+}
+QScrollBar::handle:hover{
+        background:rgb(160,169,175);
+        border:1px solid rgb(160,169,175);
+        border-radius:4px;
+}
+QScrollBar::handle:pressed{
+        background:rgb(160,169,175);
+        border:1px solid rgb(160,169,175);
+        border-radius:4px;
+}
+QScrollBar::sub-line{
+        background:rgb(247,247,247);
+}
+QScrollBar::add-line{
+        background:rgb(247,247,247);
+}
+
+/**
+作用于QComboBox的Item样式美化
+*/
+QComboBox[boxbackground="blue"]{
+background: #4ba4f2;
+color:white;
+border-radius:2px;
+padding: 3px;
+}
+QComboBox[boxbackground="white"]{
+background: rgba(255,255,255,1);
+color:#333333;
+font-family:"Microsoft YaHei";
+border-radius:2px;
+border:1px solid rgba(234,234,234,1);
+padding: 3px;
+}
+QComboBox::drop-down{
+subcontrol-origin:padding;
+subcontrol-position:top right;
+width:20px;
+border-left-width:0px;
+border-left-color:darkgray;
+border-left-style:solid;
+border-top-right-radius:3px;
+border-bottom-right-radius:3px;
+}
+QComboBox QAbstractItemView::item{
+height:25px;
+}
+
+QComboBox::down-arrow[boxbackground="blue"]{
+margin-right: 1px;
+width:10%;
+height:10%;
+image: url(:/img/windows/arrow_downWhite.png);
+}
+QComboBox::down-arrow[boxbackground="white"]{
+margin-right: 1px;
+width:10%;
+height:10%; image: url(:/img/windows/arrow_down.png);
+}
