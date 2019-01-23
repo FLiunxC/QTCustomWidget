@@ -31,7 +31,7 @@ public:
     //设置是否有点击效果
     void setClickEffect(bool clickEffect);
     /**
-     * @brief setBackgroundImage  设置button的背景图片和相关图片大小
+     * @brief setBackgroundImage  设置button的背景图片和相关图片大小(该方法已经已经过时)
      * @param imgPath 图片的路径
      * @param size 图片的大小
      */
@@ -51,9 +51,9 @@ public:
      * @param Licon 图片的路径
      * @param size 图片的大小
      */
-    void setLeftIcon(const QString &Licon, const QSize &size = QSize(0, 0));
+    void setLeftIcon(const QString &Licon, const QSize &size = QSize());
     //设置按钮右边的图标
-    void setRightIcon(const QString &Ricon, const QSize &size = QSize(0, 0));
+    void setRightIcon(const QString &Ricon, const QSize &size = QSize());
     /**
      * @brief setHoverEnabled 是否启动鼠标悬浮改变按钮颜色
      * @param Enabled treu启动，false禁止(默认是false)
@@ -72,7 +72,7 @@ public:
      * @param borderWide
      * @param borderColor
      */
-    void setButtonBorderWideAndColor(const QString &borderWide, const QString &borderColor);
+    void setButtonBorderWideAndColor(const QString &borderWide, const QString &borderColor = "");
 private:
     //初始化默认样式
     void setButtonStyleSheet();
@@ -109,10 +109,12 @@ private:
     bool m_isClickSecond = false; //是否启动二次点击，启动后每点击一下触发一次信号
     bool m_isClickEffect = false;  //是否启动点击效果
 
+    //按钮布局时的内容
     QLabel * m_buttonText = nullptr; //按钮文本
     QLabel * m_buttonLeftIcon = nullptr; //左边按钮图片
     QLabel * m_buttonRightIcon = nullptr; //右边按钮图片
 
+    //各种辅助字体背景等修饰样式
     QString m_backGroundImage; //按钮的icon图标
     QString m_backgroundColor; //按钮正常背景颜色
     QString m_fontColor = "#656565";  //按钮正常字体颜色

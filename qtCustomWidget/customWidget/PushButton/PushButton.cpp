@@ -56,14 +56,12 @@ void PushButton::initUILayout()
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
     this->setSizePolicy(sizePolicy);
-
     m_horizontalLayout = new QHBoxLayout(this);
+
      //加弹簧
     m_HspacerItemStart = new QSpacerItem(20,20, QSizePolicy::Expanding);
     m_horizontalLayout->addSpacerItem(m_HspacerItemStart);
 
-//    horizontalLayout->setStretch(0, 1);
-//    horizontalLayout->setStretch(1, 4);
     //加弹簧
     m_HspacerItemEnd = new QSpacerItem(20,20, QSizePolicy::Expanding);
     m_horizontalLayout->addSpacerItem(m_HspacerItemEnd);
@@ -92,8 +90,9 @@ void PushButton::setClickEffect(bool clickEffect)
 void PushButton::setBackgroundImage(QString imgPath, QSize size)
 {
     m_backGroundImage = imgPath;
-    this->setIcon(QIcon(QPixmap(m_backGroundImage)));
-    this->setIconSize(size);
+    //this->setIcon(QIcon(QPixmap(m_backGroundImage)));
+    //this->setIconSize(size);
+    this->setLeftIcon(imgPath,size);
 }
 
 void PushButton::setButtonTransparency(bool isTransparency)
@@ -194,7 +193,7 @@ void PushButton::setButtonText(const QString &text)
         m_buttonText = new QLabel(this);
         m_buttonText->setObjectName("buttonText");
         m_buttonText->setText(this->text());
-        this->setText("");
+
     }
 
     m_buttonText->setText(text);
@@ -270,8 +269,12 @@ void PushButton::setHoverColor(const QString &hoverBgColor, const QString &hover
 
 void PushButton::setButtonBorderWideAndColor(const QString &borderWide, const QString &borderColor)
 {
+    if(!borderColor.isEmpty())
     m_borderColor = borderColor;
+
     m_borderWide = borderWide;
+
+    setButtonStyleSheet();
 }
 
 void PushButton::enterEvent(QEvent *event)
