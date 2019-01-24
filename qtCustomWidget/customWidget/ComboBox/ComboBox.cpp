@@ -34,7 +34,6 @@ void ComboBox::paintEvent(QPaintEvent *e)
        paint.setRenderHint(QPainter::Antialiasing);
        //绘制文字
        paint.drawText(m_rect, Qt::AlignLeft|Qt::AlignVCenter, m_currentItem);
-
 }
 
 void ComboBox::initComBox()
@@ -55,7 +54,8 @@ void ComboBox::addItemTextData(QString text, int index)
 {
     if(m_listwidget != nullptr){
         ComboBoxItem* item = new ComboBoxItem(this);
-        item->setLabelContent(text, index);
+        item->setItemText(text, index);
+        //item->setImg(":/img/windows/close_b.png");
         if(index == 0)
         {
             m_currentItem = text;
@@ -64,6 +64,57 @@ void ComboBox::addItemTextData(QString text, int index)
         m_listwidget->setItemWidget(widgetItem, item);
     }
 }
+
+void ComboBox::addItemIconTextData(const QString &text, const QString &LeftIcon, const QString &RightIcon, const int index, const QSize &LeftIconsize, const QSize &RightIconsize)
+{
+    if(m_listwidget != nullptr){
+        ComboBoxItem* item = new ComboBoxItem(this);
+        item->setItemText(text, index);
+        item->setLeftIcon(LeftIcon, index, LeftIconsize);
+        item->setRightIcon(RightIcon, index, RightIconsize);
+        //item->setImg(":/img/windows/close_b.png");
+        if(index == 0)
+        {
+            m_currentItem = text;
+        }
+        QListWidgetItem* widgetItem = new QListWidgetItem(m_listwidget);
+        m_listwidget->setItemWidget(widgetItem, item);
+    }
+}
+
+void ComboBox::addItemLeftIconText(const QString &text, const QString &LeftIcon, const int index, const QSize &size)
+{
+    if(m_listwidget != nullptr){
+        ComboBoxItem* item = new ComboBoxItem(this);
+        item->setItemText(text, index);
+        item->setLeftIcon(LeftIcon, index, size);
+        //item->setImg(":/img/windows/close_b.png");
+        if(index == 0)
+        {
+            m_currentItem = text;
+        }
+        QListWidgetItem* widgetItem = new QListWidgetItem(m_listwidget);
+        m_listwidget->setItemWidget(widgetItem, item);
+    }
+}
+
+void ComboBox::addItemRightIconText(const QString &text, const QString &RightIcon, const int index, const QSize &size)
+{
+    if(m_listwidget != nullptr){
+        ComboBoxItem* item = new ComboBoxItem(this);
+        item->setItemText(text, index);
+        item->setRightIcon(RightIcon, index, size);
+        //item->setImg(":/img/windows/close_b.png");
+        if(index == 0)
+        {
+            m_currentItem = text;
+        }
+        QListWidgetItem* widgetItem = new QListWidgetItem(m_listwidget);
+        m_listwidget->setItemWidget(widgetItem, item);
+    }
+}
+
+
 
 void ComboBox::setCurrentItem(QString item)
 {
@@ -116,6 +167,7 @@ void ComboBox::leaveEvent(QEvent *event)
      this->setCursor(Qt::ArrowCursor);
     event->accept();
 }
+
 
 
 void ComboBox::currentItemChanged_slot(QListWidgetItem *current, QListWidgetItem *previous)

@@ -9,6 +9,8 @@
 */
 
 #include <QWidget>
+#include <QSpacerItem>
+#include <QSize>
 
 class QLabel;
 class QHBoxLayout;
@@ -19,17 +21,34 @@ class ComboBoxItem:public QWidget
 {
 public:
     ComboBoxItem(QWidget * parent = nullptr);
-    void setLabelContent(QString text, int index);
-    void setImg(QPixmap pic);
+
+    //设置item文本
+    void setItemText(QString text, int index = 0);
+
+    //设置左边icon
+    void setLeftIcon(const QString &LiconPath, int index = -1,QSize iconSize = QSize());
+
+    //设置右边icon
+    void setRightIcon(const QString &RiconPath,  int index =-1 ,QSize iconSize = QSize());
+
     QString getLabelString();
 
     //获取当起那ComboBoxItem的索引
     int getCurrentIndex();
 
+    void setCurrentIndex(int currentIndex);
 private:
-    QLabel * m_img;
-    QLabel * m_label;
+    void initUILayout();
+    void setIconMaxAndMinValue(QWidget * widget, const QSize &size);
+private:
+    QLabel * m_comboxLeftIcon = nullptr; //comboxItem左边的小图标
+    QLabel * m_comboxText = nullptr;  //comboxItem 文本
+    QLabel * m_comboxRightIcon = nullptr; //comboxItem 右边的小图标
+
+    //布局
     QHBoxLayout *m_layout;
+    QSpacerItem * m_HspacerItemStart;
+    QSpacerItem * m_HspacerItemEnd;
     int m_currentIndex;
 
 };

@@ -48,7 +48,33 @@ public:
      * @param text 添加的文本信息
      * @param index 当前添加的索引值，从0开始
      */
-    void addItemTextData(QString text, int index);
+    void addItemTextData(QString text, int index = -1);
+
+    /**
+     * @brief addItemIconTextData 添加item的左图标，中文本，右图标
+     * @param LeftIcon 左边图标显示的路径
+     * @param text  显示的文本内容
+     * @param RightIcon 右边图标显示的路径
+     * @param LeftIconsize 左边图标的大小，默认可以不填
+     * @param RightIconsize 右边图标的大小，默认可以不填
+     */
+    void addItemIconTextData(const QString &text, const QString &LeftIcon,const QString &RightIcon, const int index = -1, const QSize & LeftIconsize=QSize(), const QSize &RightIconsize = QSize());
+
+    /**
+     * @brief addItemLeftIconText 添加item的左边图标和文本
+     * @param text 文本信息
+     * @param LeftIcon 左边图标信息
+     * @param size 左边图标大小
+     */
+    void addItemLeftIconText(const QString &text, const QString &LeftIcon, const int index = -1, const QSize &size = QSize());
+
+    /**
+     * @brief addItemRightIconText 添加item的右边图标和文本
+     * @param text 文本信息
+     * @param RightIcon 右边图标信息
+     * @param size 右边图标的大小
+     */
+    void addItemRightIconText(const QString &text, const QString &RightIcon, const int index = -1, const QSize &size = QSize());
 
     //设置当前comboBox选中的item名称，出来时候默认是空的
     void setCurrentItem(QString item);
@@ -63,6 +89,7 @@ public:
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
+
 
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
