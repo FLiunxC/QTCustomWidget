@@ -16,6 +16,8 @@
 #include <QVariant>
 #include <QApplication>
 
+#include "ToolTip.h"
+
 QJsonObject HelpClass::m_jsonObject;
 
 HelpClass::HelpClass(QObject *parent) : QObject(parent)
@@ -456,6 +458,29 @@ QMap<QString, QString> HelpClass::readSettingFile(QString groupName, QString fil
                 map.insert(key, value);
         }
         return map;
+}
+
+void HelpClass::ToolTipmessage(QWidget *parent, QString message, QPoint point)
+{
+     ToolTip tip(parent);
+     QEventLoop loop;
+
+     if(!point.isNull())
+     {
+         tip.showToolMessage(point, message);
+     }
+     else
+     {
+         int toolWidtg = tip.getToolTipWidth(message);
+         tip.setAnimationPopupPosition(QPoint((parent->width() - toolWidtg)/2, -40), QPoint((parent->width()- toolWidtg)/2, 15));
+
+         tip.showToolMessage(message);
+     }
+
+
+     connect(&tip, &ToolTip::sighide, &loop, &QEventLoop::quit);
+     loop.exec();
+
 }
 
 //加载qss文件

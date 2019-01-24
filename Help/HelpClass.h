@@ -10,15 +10,18 @@
 
 #include <QObject>
 #include <QByteArray>
+#include <QPoint>
 
 #define DefaultKEY "1ed中.@"  //加密會用到
 #define AgencyFileName "agency.dat"
 
 class QJsonObject;
 class QJsonDocument;
+
 class HelpClass : public QObject
 {
     Q_OBJECT
+
 public:
     explicit HelpClass(QObject *parent = nullptr);
 
@@ -80,6 +83,7 @@ public:
      * @return
      */
     static bool removeFile(QString filePath="");
+
     /**
      * @brief getTimestamp 获取当前时间戳
      * @return  QString类型时间戳
@@ -138,7 +142,7 @@ public:
     * @param jsonDocument   需要解析的QJsonDocument,由外面调用传入
     * @param jsonkeyMap       需要解析的json中的Key值，首次传入，value应该为空，调用完成后，再根据key取出对应的value
     * @param headKey            json需要解析的头字段key，默认为code，如果code值不对，直接返回false，Map不做操作，code值请参考headValue
-    * @param headValue          json需要解析的头字段key匹配的正确返回值， 默认正确为0
+    * @param headValue          json需要解析的头字段key匹配的正确json返回值， 默认正确为0
     * @return true 解析成功，false 解析失败
     */
    static bool generalJsonParse(QJsonDocument, QMap<QString ,QString> &jsonkeyMap, QString headKey = "code", int headValue = 0);
@@ -168,6 +172,7 @@ public:
     * @return 无
     */
    static void setGlobalStyleSheet(const QString &qssFileName);
+
    /**
     * @brief writeSettingFile 将相关数据写入配置文件
     * @param mapSettingData 需要写入的map数据
@@ -185,6 +190,14 @@ public:
     * @return 返回对应的组名的map数据，根据自己定义的key来取值
     */
    static QMap<QString , QString> readSettingFile(QString groupName, QString filePath , bool isDecrypt = false);
+
+   /**
+    * @brief messageToolTip 消息提示框弹出，默认从最上中间弹出
+    * @param parent  弹窗的父对象
+    * @param message 弹出消息的显示文本
+    * @param point 弹出消息的位置，默认不写，位置在最上中间动画弹出, 如果填写具体位置则无动画弹出
+    */
+   static void ToolTipmessage(QWidget * parent, QString message, QPoint point = QPoint(0, 0));
 
 private:
     /**
