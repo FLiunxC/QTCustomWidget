@@ -6,10 +6,23 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QPoint>
+#include <QTimer>
 
 PushButton::PushButton(QWidget *parent) : QPushButton(parent)
 {
     initUILayout();
+}
+
+void PushButton::setSpacerWidth(int spacewidth)
+{
+    m_spaceWidth = spacewidth;
+
+    if(m_HspacerItemEnd && m_HspacerItemStart)
+    {
+        m_HspacerItemEnd->changeSize(spacewidth, spacewidth, QSizePolicy::Expanding);
+        m_HspacerItemStart->changeSize(spacewidth, spacewidth, QSizePolicy::Expanding);
+    }
+
 }
 
 void PushButton::setButtonStyleSheet(QString backgroundColor)
@@ -41,7 +54,7 @@ void PushButton::setButtonStyleSheet(QString backgroundColor)
     }
     else
     {
-        qInfo()<<"进来----";
+        //qInfo()<<"进来----";
         styleSheetQSS = QString("QPushButton#pButtonOk  \
                                     { \
                                     background-color:%1; \
@@ -64,11 +77,11 @@ void PushButton::initUILayout()
     m_horizontalLayout = new QHBoxLayout(this);
 
      //加弹簧
-    m_HspacerItemStart = new QSpacerItem(20,20, QSizePolicy::Expanding);
+    m_HspacerItemStart = new QSpacerItem(m_spaceWidth,m_spaceWidth, QSizePolicy::Expanding);
     m_horizontalLayout->addSpacerItem(m_HspacerItemStart);
 
     //加弹簧
-    m_HspacerItemEnd = new QSpacerItem(20,20, QSizePolicy::Expanding);
+    m_HspacerItemEnd = new QSpacerItem(m_spaceWidth,m_spaceWidth, QSizePolicy::Expanding);
     m_horizontalLayout->addSpacerItem(m_HspacerItemEnd);
 
     m_horizontalLayout->setContentsMargins(0, 0, 0,0);
@@ -325,11 +338,21 @@ void PushButton::setButtonBorderWideAndColor(const QString &borderWide, const QS
 void PushButton::enterEvent(QEvent *event)
 {
     this->setCursor(Qt::PointingHandCursor);
+
+    emit sigEnter();
+
+
+    //加延时是为了防止后续有其他horver信号时冲突
+    QTimer::singleShot(100, this,  [=] {emit sigHover(true);});
+
     event->accept();
 }
 
 void PushButton::leaveEvent(QEvent *event)
 {
     this->setCursor(Qt::ArrowCursor);
+
+    emit sigLeave();
+    emit sigHover(false);
     event->accept();
 }

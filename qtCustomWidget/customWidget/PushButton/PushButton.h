@@ -28,6 +28,10 @@ class PushButton : public QPushButton
 public:
     explicit PushButton(QWidget *parent = nullptr);
 
+
+    //设置Puttonbutton两边间距
+    void setSpacerWidth(int spacewidth);
+
     //设置是否有点击效果
     void setClickEffect(bool clickEffect);
     /**
@@ -111,6 +115,12 @@ signals:
     //背景颜色改变信号
     void backgroundColorChanged(QString backgroundColor);
 
+    //进入按钮
+    void sigEnter();
+    void sigLeave();
+
+    //悬浮信号，是否选择在按钮上
+    void sigHover(bool ishover);
 public slots:
 
 private slots:
@@ -144,6 +154,7 @@ private:
     QHBoxLayout * m_horizontalLayout = nullptr;
     QSpacerItem * m_HspacerItemStart = nullptr;
     QSpacerItem * m_HspacerItemEnd = nullptr;
+    int m_spaceWidth = 20;
 };
 
 #endif // PUSHBUTTON_H
