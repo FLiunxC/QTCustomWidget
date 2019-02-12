@@ -38,13 +38,23 @@ public:
     void setBackgroundImage(QString imgPath, QSize size = QSize());
     //设置背景是否透明，不影响图片的设置，单纯的背景透明
     void setButtonTransparency(bool isTransparency);
+    //设置失能后显示的颜色
+    void setDisabledBackgroundColor(QString disabledColor);
+
     //设置背景颜色，默认颜色是蓝色
     void setBackgroundColor(QString backgroundColor);
     //设置字体颜色， 默认字体颜色是灰色
-    void setFontColor(QString fontColor);
+    void setFontColor(const QString &fontColor);
+    //设置失能后的字体颜色
+    void setDisabledFontColor(const QString &fontColor);
+    //设置字体大小等
+    void setFont(const QFont &);
     //设置按钮文本
     void setButtonText(const QString &text);
+    //设置按钮文本
     void setText(const QString &text);
+    //设置使能
+    void setBtnEnabled(bool enabled);
 
     /**
      * @brief setLeftIcon  设置button的设置按钮左边的图标和对应大小
@@ -52,8 +62,10 @@ public:
      * @param size 图片的大小
      */
     void setLeftIcon(const QString &Licon, const QSize &size = QSize());
+
     //设置按钮右边的图标
     void setRightIcon(const QString &Ricon, const QSize &size = QSize());
+
     /**
      * @brief setHoverEnabled 是否启动鼠标悬浮改变按钮颜色
      * @param Enabled treu启动，false禁止(默认是false)
@@ -75,7 +87,7 @@ public:
     void setButtonBorderWideAndColor(const QString &borderWide, const QString &borderColor = "");
 private:
     //初始化默认样式
-    void setButtonStyleSheet();
+    void setButtonStyleSheet(QString backgroundColor = "");
     //初始化ui布局，左icon，中文本，右icon
     void initUILayout();
 
@@ -83,7 +95,6 @@ private:
     void setButtonMaxAndMinValue(QWidget * widget, QSize size);
 
 protected:
-
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
     void mousePressEvent(QMouseEvent *e);
@@ -116,8 +127,10 @@ private:
 
     //各种辅助字体背景等修饰样式
     QString m_backGroundImage; //按钮的icon图标
-    QString m_backgroundColor; //按钮正常背景颜色
-    QString m_fontColor = "#656565";  //按钮正常字体颜色
+    QString m_backgroundColor = "#DEDEDE"; //按钮正常背景颜色,默认是灰色
+    QString m_backgroundDisableColor = "#F4F4F4"; //使能后的正常背景颜色,默认是绿灰色
+    QString m_fontColor = "#656565";  //按钮正常字体颜色，默认黑色
+    QString m_fontDisableColor = "#B2B2B2"; //按钮失能字体颜色，默认灰色
     QString m_hoverBgColor;  //悬浮背景颜色
     QString m_hoverFontColor;  //悬浮字体颜色
     QString m_borderWide = "1px"; //边框线宽度

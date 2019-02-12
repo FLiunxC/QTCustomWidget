@@ -5,18 +5,23 @@
 #include <QApplication>
 #include <QSizePolicy>
 #include <QSpacerItem>
-
+#include <QPoint>
 
 PushButton::PushButton(QWidget *parent) : QPushButton(parent)
 {
     initUILayout();
 }
 
-void PushButton::setButtonStyleSheet()
+void PushButton::setButtonStyleSheet(QString backgroundColor)
 {
     this->setObjectName("pButtonOk");
 
     QString styleSheetQSS = "";
+
+    if(backgroundColor.isEmpty())
+    {
+         backgroundColor = m_backgroundColor;
+    }
 
     //如果启动悬浮模式则使用悬浮qss
     if(m_hoverEnabled)
@@ -32,16 +37,16 @@ void PushButton::setButtonStyleSheet()
                                     background-color:%3; \
                                     border: %4 solid %5; \
                                 } \
-                                ").arg(m_backgroundColor, m_hoverFontColor, m_hoverBgColor, m_borderWide, m_borderColor);
+                                ").arg(backgroundColor, m_hoverFontColor, m_hoverBgColor, m_borderWide, m_borderColor);
     }
     else
     {
         qInfo()<<"进来----";
         styleSheetQSS = QString("QPushButton#pButtonOk  \
-        { \
+                                    { \
                                     background-color:%1; \
                                     border-radius:2px;  \
-                                    border:%2 solid %3;}").arg(m_backgroundColor, m_borderWide, m_borderColor);
+                                    border:%2 solid %3;}").arg(backgroundColor, m_borderWide, m_borderColor);
     }
 
     this->setStyleSheet(styleSheetQSS);
@@ -106,6 +111,13 @@ void PushButton::setButtonTransparency(bool isTransparency)
                         );
 }
 
+void PushButton::setDisabledBackgroundColor(QString disabledColor)
+{
+    m_backgroundDisableColor = disabledColor;
+
+    setButtonStyleSheet(m_backgroundDisableColor);
+}
+
 
 void PushButton::mousePressEvent(QMouseEvent *e)
 {
@@ -117,8 +129,15 @@ void PushButton::mousePressEvent(QMouseEvent *e)
 
 void PushButton::mouseReleaseEvent(QMouseEvent *e)
 {
-    sigClick();
-    sigClick(m_isClickSecond);
+
+    QRect rect = this->rect();
+
+    if(rect.contains(e->pos()))
+    {
+        sigClick();
+        sigClick(m_isClickSecond);
+    }
+
     if(m_isClickEffect){
         releaseClickStyleSheet();
     }
@@ -167,9 +186,6 @@ void PushButton::releaseClickStyleSheet()
 
 void PushButton::setBackgroundColor(QString backgroundColor)
 {
-    if (m_backgroundColor == backgroundColor)
-        return;
-
     if(!backgroundColor.isEmpty())
     {
         m_backgroundColor = backgroundColor;
@@ -178,10 +194,23 @@ void PushButton::setBackgroundColor(QString backgroundColor)
     setButtonStyleSheet();
 }
 
-void PushButton::setFontColor(QString fontColor)
+void PushButton::setFontColor(const QString &fontColor)
 {
         m_fontColor = fontColor;
         m_buttonText->setStyleSheet(QString("#buttonText{color:%1}").arg(m_fontColor));
+}
+
+void PushButton::setDisabledFontColor(const QString &fontColor)
+{
+    m_fontDisableColor = fontColor;
+
+     m_buttonText->setStyleSheet(QString("#buttonText{color:%1}").arg(m_fontDisableColor));
+
+}
+
+void PushButton::setFont(const QFont & font)
+{
+        m_buttonText->setFont(font);
 }
 
 void PushButton::setButtonText(const QString &text)
@@ -204,6 +233,22 @@ void PushButton::setButtonText(const QString &text)
 void PushButton::setText(const QString &text)
 {
     setButtonText(text);
+}
+
+void PushButton::setBtnEnabled(bool enabled)
+{
+     this->setEnabled(enabled);
+    if(enabled)
+    {
+        setBackgroundColor(m_backgroundColor);
+        setFontColor(m_fontColor);
+    }
+    else
+    {
+        setDisabledBackgroundColor(m_backgroundDisableColor);
+        setDisabledFontColor(m_fontDisableColor);
+    }
+
 }
 
 void PushButton::setLeftIcon(const QString &Licon, const QSize & size)
