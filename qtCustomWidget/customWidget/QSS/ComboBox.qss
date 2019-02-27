@@ -1,9 +1,18 @@
+/**
+ * [boxbackground description] 动态属性显示，由代码控制设置
+ * @type {String} 显示ComboxBox为天蓝色背景
+ */
 QComboBox[boxbackground="blue"]{
 background: #4ba4f2;
 color:white;
 border-radius:2px;
 padding: 3px;
 }
+
+/**
+ * [boxbackground description]  动态属性显示， 由代码控制设置
+ * @type {String} 显示ComboBox为白色背景
+ */
 QComboBox[boxbackground="white"]{
 background: rgba(255,255,255,1);
 color:#333333;
@@ -13,6 +22,10 @@ border:1px solid rgba(234,234,234,1);
 padding: 3px;
 }
 
+/**
+ * [QComboBox description] 显示控件的下拉小箭头
+ * @type {[type]}
+ */
 QComboBox::drop-down{
 subcontrol-origin:padding;
 subcontrol-position:top right;
@@ -23,14 +36,30 @@ border-left-style:solid;
 border-top-right-radius:3px;
 border-bottom-right-radius:3px;
 }
+
+/**
+ * [border description] 下拉框颜色哦
+ * @type {[type]} 代理的list下拉框显示样式
+ */
+QListWidget{border:1px solid #E4E4E4;}
+QListWidget::item:selected{
+        background:#EFF3F5;
+}
+
+QListWidget::item:selected:!active{
+        background:#EFF3F5;
+}
+
 QComboBox QAbstractItemView::item{
 height:25px;
 }
+
 QComboBox::down-arrow[boxbackground="blue"]{
 margin-right: 1px;
 width:10%;
 height:10%; image: url(:/img/windows/arrow_downWhite.png);
 }
+
 QComboBox::down-arrow[boxbackground="white"]{
 margin-right: 1px;
 width:10%;
