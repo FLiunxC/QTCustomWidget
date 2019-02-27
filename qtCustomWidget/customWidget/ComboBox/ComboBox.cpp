@@ -37,7 +37,7 @@ void ComboBox::paintEvent(QPaintEvent *e)
        paint.drawText(m_rect, Qt::AlignLeft|Qt::AlignVCenter, m_currentItem);
 }
 
-void ComboBox::initComBox()
+void ComboBox::initComBox(QString StyleSheetback)
 {
      if(m_listwidget == nullptr)
      {
@@ -54,10 +54,10 @@ void ComboBox::initComBox()
               addItemTextData(this->itemText(i));
           }
 
+          setInitStyleSheet(StyleSheetback);
+
+          connect(m_listwidget, &QListWidget::itemPressed , this, &ComboBox::currentItemClicked_slot);
      }
-
-     connect(m_listwidget, &QListWidget::currentItemChanged , this, &ComboBox::currentItemChanged_slot);
-
 }
 
 void ComboBox::addItemTextData(QString text, int index)
@@ -179,10 +179,10 @@ void ComboBox::leaveEvent(QEvent *event)
 
 
 
-void ComboBox::currentItemChanged_slot(QListWidgetItem *current, QListWidgetItem *previous)
+void ComboBox::currentItemClicked_slot(QListWidgetItem *currentItem)
 {
-     QListWidget *list = current->listWidget();
-     ComboBoxItem * c = static_cast<ComboBoxItem *>(list->itemWidget(current));
+     QListWidget *list = currentItem->listWidget();
+     ComboBoxItem * c = static_cast<ComboBoxItem *>(list->itemWidget(currentItem));
      m_currentItem = c->getLabelString();
      int index = c->getCurrentIndex();
      sigCurrentIndexChange(m_currentItem,index);

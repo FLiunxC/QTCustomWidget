@@ -40,7 +40,7 @@ public:
 
 
     //使用此控件，必须手动显示调用initComBox()该方法
-    void initComBox();
+    void initComBox(QString StyleSheetback = "blue");
 
     //必须调用initComBox后才能调用该方法赋值Item数据
     /**
@@ -97,9 +97,8 @@ protected:
 signals:
     void sigCurrentIndexChange(QString text, int index);
 public slots:
-public slots:
     //ListWidget的item项选择变换
-    void currentItemChanged_slot(QListWidgetItem * current, QListWidgetItem * previous);
+    void currentItemClicked_slot(QListWidgetItem * currentItem);
 
 private :
     QString m_currentItem;

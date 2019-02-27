@@ -11,6 +11,7 @@
 #include <QWidget>
 #include <QSpacerItem>
 #include <QSize>
+#include <QMouseEvent>
 
 class QLabel;
 class QHBoxLayout;
@@ -37,6 +38,7 @@ public:
     int getCurrentIndex();
 
     void setCurrentIndex(int currentIndex);
+
 private:
     void initUILayout();
     void setIconMaxAndMinValue(QWidget * widget, const QSize &size);
