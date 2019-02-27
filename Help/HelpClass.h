@@ -60,6 +60,14 @@ public:
     static bool isDirExist(QString fullPath);
 
     /**
+     * [AutoRunWithSystem 设置软件开机自启动]
+     * @param IsAutoRun [是否开机自启动]
+     * @param AppName   [运行的app名称]
+     * @param AppPath   [运行app路径]
+     */
+    static void AutoRunWithSystem(bool IsAutoRun, QString AppName, QString AppPath);
+
+    /**
      * @brief bytesToKB  字节 转换为B KB MB GB
      * @param bytes 需要转换的字节数
      * @return 转换成功的对应KB, 大小，默认保留两位小数

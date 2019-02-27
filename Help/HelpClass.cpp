@@ -700,3 +700,16 @@ void HelpClass::setGlobalStyleSheet(const QString &qssFileName)
 
     return;
 }
+
+void HelpClass::AutoRunWithSystem(bool IsAutoRun, QString AppName, QString AppPath)
+{
+    QSettings *reg = new QSettings(
+            "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+            QSettings::NativeFormat);
+
+        if (IsAutoRun) {
+            reg->setValue(AppName, AppPath);
+        } else {
+            reg->setValue(AppName, "");
+        }
+}
