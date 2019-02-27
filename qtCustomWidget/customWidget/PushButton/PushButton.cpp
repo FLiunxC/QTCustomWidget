@@ -19,8 +19,8 @@ void PushButton::setSpacerWidth(int spacewidth)
 
     if(m_HspacerItemEnd && m_HspacerItemStart)
     {
-        m_HspacerItemEnd->changeSize(spacewidth, spacewidth, QSizePolicy::Expanding);
-        m_HspacerItemStart->changeSize(spacewidth, spacewidth, QSizePolicy::Expanding);
+        m_HspacerItemEnd->changeSize(spacewidth, spacewidth, QSizePolicy::Fixed);
+        m_HspacerItemStart->changeSize(spacewidth, spacewidth, QSizePolicy::Fixed);
     }
 
 }
@@ -42,12 +42,14 @@ void PushButton::setButtonStyleSheet(QString backgroundColor)
         styleSheetQSS = QString("QPushButton{outline:0px;border:0px;}" \
                                 "QPushButton#pButtonOk  \
                                 {   background-color:%1; \
+                                    border-radius:3px;  \
                                     border: %4 solid %5; \
                                 } \
                                 QPushButton#pButtonOk:hover \
                                 { \
                                     color:%2;   \
                                     background-color:%3; \
+                                    border-radius:3px;  \
                                     border: %4 solid %5; \
                                 } \
                                 ").arg(backgroundColor, m_hoverFontColor, m_hoverBgColor, m_borderWide, m_borderColor);
@@ -58,7 +60,7 @@ void PushButton::setButtonStyleSheet(QString backgroundColor)
         styleSheetQSS = QString("QPushButton#pButtonOk  \
                                     { \
                                     background-color:%1; \
-                                    border-radius:2px;  \
+                                    border-radius:3px;  \
                                     border:%2 solid %3;}").arg(backgroundColor, m_borderWide, m_borderColor);
     }
 
@@ -85,8 +87,8 @@ void PushButton::initUILayout()
     m_horizontalLayout->addSpacerItem(m_HspacerItemEnd);
 
     m_horizontalLayout->setContentsMargins(0, 0, 0,0);
-    this->setText("");
 
+    this->setText("");
 }
 
 void PushButton::setButtonMaxAndMinValue(QWidget *widget , QSize size)
@@ -143,19 +145,20 @@ void PushButton::mousePressEvent(QMouseEvent *e)
 void PushButton::mouseReleaseEvent(QMouseEvent *e)
 {
 
-    QRect rect = this->rect();
-
-    if(rect.contains(e->pos()))
-    {
-        sigClick();
-        sigClick(m_isClickSecond);
-    }
-
     if(m_isClickEffect){
         releaseClickStyleSheet();
     }
 
     m_isClickSecond = !m_isClickSecond;
+
+    QRect rect = this->rect();
+
+    if(rect.contains(e->pos()))
+    {
+        emit sigBtnClick();
+        emit sigClick();
+        emit sigClick(m_isClickSecond);
+    }
 
     e->accept();
 }
@@ -325,34 +328,42 @@ void PushButton::setHoverColor(const QString &hoverBgColor, const QString &hover
     m_hoverFontColor = hoverFontColor;
 }
 
-void PushButton::setButtonBorderWideAndColor(const QString &borderWide, const QString &borderColor)
+void PushButton::setButtonBorderWideAndColor(const int &borderWide, const QString &borderColor)
 {
+    QString wide = QString::number(borderWide);
+
     if(!borderColor.isEmpty())
     m_borderColor = borderColor;
 
-    m_borderWide = borderWide;
+    m_borderWide = wide;
 
     setButtonStyleSheet();
 }
 
 void PushButton::enterEvent(QEvent *event)
 {
+    if(m_hoverEnabled)
+    {
     this->setCursor(Qt::PointingHandCursor);
 
     emit sigEnter();
 
 
     //加延时是为了防止后续有其他horver信号时冲突
-    QTimer::singleShot(100, this,  [=] {emit sigHover(true);});
+    QTimer::singleShot(50, this,  [=] {emit sigHover(true);});
 
+    }
     event->accept();
 }
 
 void PushButton::leaveEvent(QEvent *event)
 {
-    this->setCursor(Qt::ArrowCursor);
+    if(m_hoverEnabled)
+    {
+        this->setCursor(Qt::ArrowCursor);
 
-    emit sigLeave();
-    emit sigHover(false);
-    event->accept();
+        emit sigLeave();
+        emit sigHover(false);
+    }
+     event->accept();
 }

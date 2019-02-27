@@ -9,10 +9,11 @@ ToolTip::ToolTip(QWidget *parent) : QLabel(parent)
     m_timer = new QTimer(this);
     m_timer->setInterval(m_msec);
     m_timer->setSingleShot(true);
+
     QNGraphicsEffect * bodyShadow = new QNGraphicsEffect();
-    bodyShadow->setBlurRadius(13.0);
+    bodyShadow->setBlurRadius(10.0);
     bodyShadow->setDistance(3.0);
-    bodyShadow->setColor(QColor(0, 0, 0, 80));
+    bodyShadow->setColor(QColor(0, 0, 0, 20));
 
     this->setGraphicsEffect(bodyShadow);
     this->setStyleSheet("background:#ffffff; \
@@ -20,6 +21,7 @@ ToolTip::ToolTip(QWidget *parent) : QLabel(parent)
                            border-radius:2px; \
                            color:#656565;");
     this->setAlignment(Qt::AlignCenter);
+
     connect(m_timer, &QTimer::timeout,this,&ToolTip::hideToolTip);
 }
 
@@ -61,8 +63,8 @@ void ToolTip::showToolMessage(QString msg)
         this->show();
         startAnimation();
     }
-    m_isStartAnimation = false;
 
+    m_isStartAnimation = false;
 }
 
 void ToolTip::setToolTipDelay(int msec)
@@ -74,32 +76,66 @@ void ToolTip::setToolTipDelay(int msec)
     }
 }
 
-void ToolTip::setAnimationPopup(QPoint startPoint, QPoint endPoint, bool isStart)
+void ToolTip::setAnimationPopupPosition(QPoint startPoint, QPoint endPoint, bool isStart)
 {
-
      m_isStartAnimation = isStart;
      m_animStartPoint = startPoint;
      m_anmEndPoint = endPoint;
+}
+
+int ToolTip::getToolTipWidth(QString message)
+{
+    QFontMetrics fontMetrics(QN_Windows_BetterBoldFont);
+    return fontMetrics.width(message);
+}
+
+void ToolTip::endAnimation()
+{
+    if(m_animation == nullptr)
+    {
+        m_animation = new QPropertyAnimation(this, "pos");
+    }
+    if(m_animation->state()== QAbstractAnimation::Running)
+    {
+        m_animation->stop();
+    }
+
+    m_animation->setDuration(200);
+
+    m_animation->setStartValue(m_anmEndPoint);
+    m_animation->setEndValue(m_animStartPoint);
+
+    m_isStart = false;
+    m_animation->start();
+
+    connect(m_animation, &QPropertyAnimation::finished, [=]{
+            Q_ASSERT(m_timer);
+            if(m_timer != nullptr)
+            {
+                m_timer->start();
+            }
+    });
 
 }
 
 void ToolTip::startAnimation()
 {
-
     if(m_animation == nullptr)
     {
         m_animation = new QPropertyAnimation(this, "pos");
     }
-    
-    if(m_animation->state()== 2)
+
+    if(m_animation->state()== QAbstractAnimation::Running)
     {
         m_animation->stop();
     }
-    
+
     m_animation->setDuration(400);
+
     m_animation->setStartValue(m_animStartPoint);
     m_animation->setEndValue(m_anmEndPoint);
 
+    m_isStart = true;
     m_animation->start();
     connect(m_animation, &QPropertyAnimation::finished, [=]{
             Q_ASSERT(m_timer);
@@ -112,5 +148,13 @@ void ToolTip::startAnimation()
 
 void ToolTip::hideToolTip()
 {
-    this->sighide();
+    if(m_isStart)
+    {
+          endAnimation();
+    }
+    else
+    {
+          this->sighide();
+    }
+
 }

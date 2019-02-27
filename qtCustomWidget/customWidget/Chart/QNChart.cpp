@@ -12,6 +12,7 @@ void QNChart::addLineChartData(qreal x, qreal y)
     m_LineSeries->append(x, y);
     m_ScatterSeries->append(x, y);
 }
+
 QChart* QNChart::initLineChartData()
 {
     Q_ASSERT(m_LineSeries == nullptr);
@@ -28,10 +29,10 @@ QChart* QNChart::initLineChartData()
     QStringList value;
     value<<"1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7";
 
-    for(int i = 0; i < 7; i++)
+    for(int i = 0; i < 30; i++)
     {
         QDateTime momentInTime;
-        QString data = value.at(i);
+        QString data = QString::number(i+1);//value.at(i);
         momentInTime.setDate(QDate(2008,5 , data.toInt()));
         qint64 msecs =  momentInTime.toMSecsSinceEpoch();
         addLineChartData(msecs, qrand()%10);
@@ -48,7 +49,7 @@ QChart* QNChart::initLineChartData()
     }
 
     m_axisX->setFormat("MMM/dd");
-    m_axisX->setTickCount(7);
+    m_axisX->setTickCount(12);
     m_axisX->setGridLineVisible(false);
 
     chart->addAxis(m_axisX, Qt::AlignBottom);

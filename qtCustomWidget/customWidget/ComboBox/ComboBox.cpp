@@ -10,7 +10,8 @@
 
 ComboBox::ComboBox(QWidget *parent) : QComboBox(parent)
 {
-    m_currentItem = tr("Latest Week");
+    //m_currentItem = tr("Latest Week");
+    this->clear();
     m_update = true;
 }
 
@@ -44,6 +45,15 @@ void ComboBox::initComBox()
           this->setItemDelegate(new QNoFocusFrameDelegate(this));
           this->setModel(m_listwidget->model());
           this->setView(m_listwidget);
+
+          //如果原生有数据则转换为提升控件数据
+          int count = this->count();
+
+          for(int i = 0; i < count; i++)
+          {
+              addItemTextData(this->itemText(i));
+          }
+
      }
 
      connect(m_listwidget, &QListWidget::currentItemChanged , this, &ComboBox::currentItemChanged_slot);
@@ -113,7 +123,6 @@ void ComboBox::addItemRightIconText(const QString &text, const QString &RightIco
         m_listwidget->setItemWidget(widgetItem, item);
     }
 }
-
 
 
 void ComboBox::setCurrentItem(QString item)

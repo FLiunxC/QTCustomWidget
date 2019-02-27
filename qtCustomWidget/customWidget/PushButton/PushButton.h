@@ -88,7 +88,7 @@ public:
      * @param borderWide
      * @param borderColor
      */
-    void setButtonBorderWideAndColor(const QString &borderWide, const QString &borderColor = "");
+    void setButtonBorderWideAndColor(const int &borderWide, const QString &borderColor = "");
 private:
     //初始化默认样式
     void setButtonStyleSheet(QString backgroundColor = "");
@@ -108,6 +108,8 @@ private:
     void pressClickStyleSheet();
     void releaseClickStyleSheet();
 signals:
+    //单独隔离出来的一个点击信号
+    void sigBtnClick();
     //该信号可以监听单次点击效果
     void sigClick();
     //该信号可以监听点击按钮的次数，isSecondClick ---false为第一次点击，true为第二次点击，只能交替监听2次点击
@@ -148,7 +150,7 @@ private:
     QString m_leftIconSource = "" ; //左边图标的链接
     QString m_rightIconSource = "" ; //右边图标的链接
 
-    bool m_hoverEnabled  = false; //是否使能鼠标悬浮，默认时false
+    bool m_hoverEnabled  = true; //是否使能鼠标悬浮，默认时false
 
     //按钮布局三神器，提供动态布局伸缩
     QHBoxLayout * m_horizontalLayout = nullptr;
