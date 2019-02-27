@@ -15,10 +15,13 @@
 #include <QSettings>
 #include <QVariant>
 #include <QApplication>
-
+#include <QFontMetrics>
 #include "ToolTip.h"
+#include <QClipboard>
+#include "QNGraphicsEffect.h"
 
 QJsonObject HelpClass::m_jsonObject;
+QLabel* HelpClass::m_label = nullptr;
 
 HelpClass::HelpClass(QObject *parent) : QObject(parent)
 {
@@ -62,10 +65,12 @@ bool HelpClass::isDirExist(QString fullPath)
     QDir dir(fullPath);
     if(dir.exists())
     {
+        qDebug() << "dir exists" << fullPath;
         return true;
     }
     else
     {
+        qDebug() << "create path fullPath";
         bool ok = dir.mkpath(fullPath);//创建多级目录
         return ok;
     }
@@ -125,7 +130,7 @@ bool HelpClass::removeFile(QString filePath)
     }
     else
     {
-         qCritical("File '%s' does not exist!", qUtf8Printable(filePath));
+        qCritical("File '%s' does not exist!", qUtf8Printable(filePath));
     }
     delete file;
     return false;
@@ -141,16 +146,16 @@ QString HelpClass::getTimestamp()
 
 QString HelpClass::md5Encrypt(QString plaintextStr)
 {
-     if(plaintextStr.isEmpty())
-     {
-         return "";
-     }
-     QByteArray plaintextByArray = plaintextStr.toLocal8Bit();
-     QByteArray byteMd5 = QCryptographicHash::hash(plaintextByArray, QCryptographicHash::Md5);
+    if(plaintextStr.isEmpty())
+    {
+        return "";
+    }
+    QByteArray plaintextByArray = plaintextStr.toLocal8Bit();
+    QByteArray byteMd5 = QCryptographicHash::hash(plaintextByArray, QCryptographicHash::Md5);
 
-     QString strPwdMd5 = byteMd5.toHex();
+    QString strPwdMd5 = byteMd5.toHex();
 
-     return strPwdMd5;
+    return strPwdMd5;
 }
 
 QString HelpClass::getCurrentTime(const QString &format)
@@ -216,31 +221,42 @@ QString HelpClass::tojsonArray(QJsonArray jsonArray)
     return strJson;
 }
 
-bool HelpClass::generalJsonParse(QJsonDocument jsonDocument, QMap<QString, QString> &jsonkeyMap, QString headKey, int headValue)
+bool HelpClass::generalJsonParse(QJsonDocument jsonDocument, QMap<QString, QString> &jsonkeyMap, QString headKey, int headValue, bool flage)
 {
     if(jsonDocument.isObject())
     {
-         QJsonObject object = jsonDocument.object();
+        QJsonObject object = jsonDocument.object();
 
         if(object.contains(headKey))
         {
-            if(object.take(headKey)== headValue)
+            int code = object.value(headKey).toInt();
+            if(flage || code== headValue)
             {
-                   QStringList keyList = jsonkeyMap.keys();
+                QStringList keyList = jsonkeyMap.keys();
 
-                   for(QString key : keyList)
-                   {
-                       if(object.contains(key))
-                       {
-                           QJsonValue value = object.value(key);
-                           QVariant varVariant = value.toVariant();
-                           jsonkeyMap[key] = varVariant.toString();
-                       }
-                   }
-                   return true;
+                for(QString key : keyList)
+                {
+                    if(object.contains(key))
+                    {
+                        QJsonValue value = object.value(key);
+                        QVariant varVariant = value.toVariant();
+                        jsonkeyMap[key] = varVariant.toString();
+                    }
+                }
+                return true;
             }
             else
             {
+                QStringList keyList = jsonkeyMap.keys();
+                for(QString key : keyList)
+                {
+                    if(object.contains(key))
+                    {
+                        QJsonValue value = object.value(key);
+                        QVariant varVariant = value.toVariant();
+                        jsonkeyMap[key] = varVariant.toString();
+                    }
+                }
                 return false;
             }
         }
@@ -259,22 +275,22 @@ bool HelpClass::generalJsonParse(QJsonDocument jsonDocument, QMap<QString, QStri
             if(value.isObject())
             {
                 QJsonObject object = array.at(i).toObject();
-                if(object.contains(headKey))
+                if(flage || object.contains(headKey))
                 {
-                    if(object.take(headKey)== headValue)
+                    if(flage  || object.take(headKey)== headValue)
                     {
-                           QStringList keyList = jsonkeyMap.keys();
+                        QStringList keyList = jsonkeyMap.keys();
 
-                           for(QString key : keyList)
-                           {
-                               if(object.contains(key))
-                               {
-                                   QJsonValue value = object.value(key);
-                                   QVariant varVariant = value.toVariant();
-                                   jsonkeyMap[key] = varVariant.toString();
-                               }
-                           }
-                           return true;
+                        for(QString key : keyList)
+                        {
+                            if(object.contains(key))
+                            {
+                                QJsonValue value = object.value(key);
+                                QVariant varVariant = value.toVariant();
+                                jsonkeyMap[key] = varVariant.toString();
+                            }
+                        }
+                        return true;
                     }
                     else
                     {
@@ -287,6 +303,111 @@ bool HelpClass::generalJsonParse(QJsonDocument jsonDocument, QMap<QString, QStri
                 }
             }
 
+        }
+    }
+
+    return false;
+}
+
+bool HelpClass::generalArrayJsonParse(QJsonDocument jsonDocument, QList<QMapString> &listJsonkepMap, QMapString jsonkey, QString arrayKey, QString headKey, int headValue)
+{
+    //只判断是对象的情况，数组情况目前不做判断
+    if(jsonDocument.isObject())
+    {
+        QJsonObject jsonObject = jsonDocument.object();
+
+        if(jsonObject.contains(headKey))
+        {
+            if(jsonObject.take(headKey).toInt() == headValue)
+            {
+                QJsonValue jsonValue = jsonObject.value(arrayKey);
+
+                //进行判断，是否是数组
+                if(jsonValue.isArray())
+                {
+                    QJsonArray array = jsonValue.toArray();
+
+                    for(int i = 0; i < array.size(); i++)
+                    {
+                        QJsonValue value =  array.at(i);
+
+                        if(value.isObject())
+                        {
+                            QJsonObject object = array.at(i).toObject();
+
+                            QStringList keyList = jsonkey.keys();
+                            QMapString tempMap;
+                            for(QString key : keyList)
+                            {
+                                if(object.contains(key))
+                                {
+                                    QJsonValue value = object.value(key);
+                                    QVariant varVariant = value.toVariant();
+
+                                    tempMap[key] = varVariant.toString();
+
+                                }
+                            }
+                           listJsonkepMap.append(tempMap);
+                        }
+                        else if(value.isString())
+                        {
+                            QMapString tempMap;
+
+                            QJsonValue JsonValue = array.at(i).toString();
+                            tempMap["text"] = JsonValue.toString();
+
+                            listJsonkepMap.append(tempMap);
+                        }
+                    }
+
+                    return true;
+                }
+                else if(jsonValue.isObject())
+                {
+                    //特殊情况，可能名称相同，先对象后数组，如果再不是，直接返回false
+                        QJsonObject jsonobject = jsonValue.toObject();
+                        //再取一次
+                        if(jsonobject.contains(arrayKey))
+                        {
+                              QJsonValue jsonvalue = jsonobject.value(arrayKey);
+                              //进行判断，是否是数组
+                              if(jsonvalue.isArray())
+                              {
+                                  QJsonArray array = jsonvalue.toArray();
+
+                                  for(int i = 0; i < array.size(); i++)
+                                  {
+                                      QJsonValue value =  array.at(i);
+
+                                      if(value.isObject())
+                                      {
+                                          QJsonObject object = array.at(i).toObject();
+
+                                          QStringList keyList = jsonkey.keys();
+
+                                          QMapString tempMap;
+                                          for(QString key : keyList)
+                                          {
+                                              if(object.contains(key))
+                                              {
+                                                  QJsonValue value = object.value(key);
+                                                  QVariant varVariant = value.toVariant();
+
+                                                  tempMap[key] = varVariant.toString();
+                                              }
+                                          }
+
+                                          listJsonkepMap.append(tempMap);
+                                      }
+                                  }
+                              }
+                        }
+
+                        return true;
+                }
+                return false;
+            }
         }
     }
 
@@ -348,10 +469,12 @@ bool HelpClass::writeDataToFile(QList<QMap<QString, QStringList> > mapList, QStr
 
 QList<QMap<QString, QStringList> > HelpClass::ReadDataFromFile(QString Path)
 {
+    isDirExist(getCurrentTempDataDir()+"/Data/");
     if(Path.isEmpty())
     {
         Path = getCurrentTempDataDir()+"/Data/"+AgencyFileName;
     }
+
     QFile * file = new QFile(Path);
     QList<QMap<QString, QStringList> > mapList;
     //默认只写，不会追加前面已有的数据，而是覆盖前面的数据
@@ -415,72 +538,138 @@ void HelpClass::writeSettingFile(QMap<QString, QString> mapSettingData, QString 
 
     QStringList mapList = mapSettingData.keys();
 
-     settings.beginGroup(groupName);
-     for(QString key : mapList)
-     {
-         QString value = mapSettingData.value(key);
-         if(isEncrypt)
-         {
-             QByteArray valueData = GetEncrypt(value);
-             settings.setValue(key, valueData);
-         }
-         else
-         {
-             settings.setValue(key, value);
-         }
-     }
+    settings.beginGroup(groupName);
+    for(QString key : mapList)
+    {
+        QString value = mapSettingData.value(key);
+        if(isEncrypt)
+        {
+            QByteArray valueData = GetEncrypt(value);
+            settings.setValue(key, valueData);
+        }
+        else
+        {
+            settings.setValue(key, value);
+        }
+    }
 
-     settings.endGroup();
+    settings.endGroup();
 }
 
 QMap<QString, QString> HelpClass::readSettingFile(QString groupName, QString filePath, bool isDecrypt)
 {
-        QMap<QString, QString> map;
-        QSettings settings(filePath,QSettings::IniFormat);
+    QMap<QString, QString> map;
+    QSettings settings(filePath,QSettings::IniFormat);
 
-        settings.beginGroup(groupName);
-        QStringList keyList = settings.allKeys();
+    settings.beginGroup(groupName);
+    QStringList keyList = settings.allKeys();
 
-        for(QString key :keyList)
+    for(QString key :keyList)
+    {
+        QString value;
+        if(isDecrypt)
         {
-                QString value;
-                if(isDecrypt)
-                {
-                     QByteArray valueData = settings.value(key).toByteArray();
-                     valueData = GetDecrypt(valueData);
+            QByteArray valueData = settings.value(key).toByteArray();
+            valueData = GetDecrypt(valueData);
 
-                     value = QString(valueData);
-                }
-                else
-                {
-                     value = settings.value(key).toString();
-                }
-                map.insert(key, value);
+            value = QString(valueData);
         }
-        return map;
+        else
+        {
+            value = settings.value(key).toString();
+        }
+        map.insert(key, value);
+    }
+    return map;
 }
 
 void HelpClass::ToolTipmessage(QWidget *parent, QString message, QPoint point)
 {
-     ToolTip tip(parent);
-     QEventLoop loop;
+    ToolTip tip(parent);
 
-     if(!point.isNull())
-     {
-         tip.showToolMessage(point, message);
-     }
-     else
-     {
-         int toolWidtg = tip.getToolTipWidth(message);
-         tip.setAnimationPopupPosition(QPoint((parent->width() - toolWidtg)/2, -40), QPoint((parent->width()- toolWidtg)/2, 15));
+    //显示时间为2秒
+    tip.setToolTipDelay(1500);
 
-         tip.showToolMessage(message);
-     }
+    QEventLoop loop;
+
+    if(!point.isNull())
+    {
+        tip.showToolMessage(point, message);
+    }
+    else
+    {
+        int toolWidtg = tip.getToolTipWidth(message);
+        tip.setAnimationPopupPosition(QPoint((parent->width() - toolWidtg)/2, -60), QPoint((parent->width()- toolWidtg)/2, 15));
+
+        tip.showToolMessage(message);
+    }
 
 
-     connect(&tip, &ToolTip::sighide, &loop, &QEventLoop::quit);
-     loop.exec();
+    connect(&tip, &ToolTip::sighide, &loop, &QEventLoop::quit);
+    loop.exec();
+}
 
+int HelpClass::getFontWidth(QString text)
+{
+    QFontMetrics fontMetrics(QFont("Microsoft Yahei",12));
+    return fontMetrics.width(text);
+}
+
+void HelpClass::showDialogText(QWidget *parent, QString showText, bool free)
+{
+    //释放label指针
+    if(free)
+    {
+        if(m_label)
+        {
+            //如果有父对象走Qt释放如下
+            if(m_label->parent())
+            {
+                m_label->deleteLater();
+            }
+            else
+            {
+                delete m_label;
+            }
+            m_label = nullptr;
+        }
+    }
+
+    if(m_label == nullptr)
+    {
+        m_label = new QLabel(parent);
+        int fontwidget = getFontWidth(showText)+10;
+
+        int labelX = (parent->width() - fontwidget)/2;
+        int labelY = (parent->height()/2)+10;
+
+        m_label->setGeometry(labelX, labelY, fontwidget, 50);
+        m_label->setStyleSheet("   background-color:#FFFFFF; \
+                                  border-radius:2px 0px 0px 2px; \
+                                  border-bottom:0px solid rgba(234,234,234,1); \
+                                  font-size:15px; \
+                                 font-family:Microsoft YaHei;  \
+                                 color:#333333;");
+        m_label->setText(showText);
+        m_label->raise();
+        m_label->show();
+    }
+}
+
+void HelpClass::setGraphicsEffect(QWidget *parent)
+{
+    QNGraphicsEffect * bodyShadow = new QNGraphicsEffect(parent);
+    bodyShadow->setBlurRadius(10.0);
+    bodyShadow->setDistance(4.0);
+    bodyShadow->setColor(QColor(0, 0, 0, 10));
+    parent->setGraphicsEffect(bodyShadow);
+
+}
+
+void HelpClass::copyText(QString text)
+{
+    QClipboard *clipboard = QApplication::clipboard();   //获取系统剪贴板指针
+    clipboard->setText(text);	 //设置剪贴板内容
 }
 
 //加载qss文件

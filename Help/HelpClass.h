@@ -11,12 +11,15 @@
 #include <QObject>
 #include <QByteArray>
 #include <QPoint>
+#include <QLabel>
 
 #define DefaultKEY "1ed中.@"  //加密會用到
 #define AgencyFileName "agency.dat"
 
 class QJsonObject;
 class QJsonDocument;
+
+typedef QMap<QString ,QString>  QMapString;
 
 class HelpClass : public QObject
 {
@@ -143,10 +146,21 @@ public:
     * @param jsonkeyMap       需要解析的json中的Key值，首次传入，value应该为空，调用完成后，再根据key取出对应的value
     * @param headKey            json需要解析的头字段key，默认为code，如果code值不对，直接返回false，Map不做操作，code值请参考headValue
     * @param headValue          json需要解析的头字段key匹配的正确json返回值， 默认正确为0
+    * @param flage                  跳过json headKey和value的对比，直接截取对应需要的字段
     * @return true 解析成功，false 解析失败
     */
-   static bool generalJsonParse(QJsonDocument, QMap<QString ,QString> &jsonkeyMap, QString headKey = "code", int headValue = 0);
+   static bool generalJsonParse(QJsonDocument, QMap<QString ,QString> &jsonkeyMap, QString headKey = "code", int headValue = 0, bool flage = false);
 
+   /**
+    * @brief generalarrayJsonParse  通用的json数组解析方法 ,只能支持一级数组json解析，数组嵌套型的暂不支持
+    * @param jsonArray 需要解析的QJsonArray,由外面调用传入
+    * @param listJsonkepMap 需要解析的json中的Key值，首次传入，value应该为空，调用完成后，再根据key取出对应的value
+    * @param arrayKey 需要解析判断的json中的key值，如果判断不是数组类型，直接返回false，
+    * @param headKey  json需要解析的头字段key，默认为code，如果code值不对，直接返回false，Map不做操作，code值请参考headValue
+    * @param headValue  json需要解析的头字段key匹配的正确json返回值， 默认正确为0
+    * @return
+    */
+   static bool generalArrayJsonParse(QJsonDocument jsonDocument, QList<QMapString> & listJsonkepMap, QMapString jsonkey, QString arrayKey, QString headKey = "code", int headValue = 0);
    /**
     * @brief getUuid 获取Uuid唯一标识符 ，经测试不会重复出现
     * @return
@@ -192,13 +206,41 @@ public:
    static QMap<QString , QString> readSettingFile(QString groupName, QString filePath , bool isDecrypt = false);
 
    /**
-    * @brief messageToolTip 消息提示框弹出，默认从最上中间弹出
+    * @brief ToolTipmessage 消息提示框弹出，默认从最上中间弹出
     * @param parent  弹窗的父对象
     * @param message 弹出消息的显示文本
     * @param point 弹出消息的位置，默认不写，位置在最上中间动画弹出, 如果填写具体位置则无动画弹出
     */
    static void ToolTipmessage(QWidget * parent, QString message, QPoint point = QPoint(0, 0));
 
+   /**
+    * @brief getFontWidth 获取字体长度
+    * @param text 字体文本
+    * @return 字体长度
+    */
+   static int getFontWidth(QString text);
+
+   /**
+    * @brief showDialogText  首先子对象的提示性文本框，如：该数据获取为空等等提示性
+    * @param parent 需要显示的父对象
+    * @param showText 需要显示提示的文本内同
+    * @param free 是否释放该控件文本
+    */
+   static void showDialogText(QWidget *parent, QString showText, bool free = false);
+
+   /**
+    * @brief setGraphicsEffect 设置文本阴影
+    * @param parent 需要设置的父对象
+    */
+   static void setGraphicsEffect(QWidget * parent);
+
+   /**
+    * @brief CopyText  剪切板实现“复制”“粘贴”功能
+    * @param text 需要复制的文本
+    */
+   static void copyText(QString text);
+
+   //-----------------------------------------结束-------------------------------------------------------//
 private:
     /**
      * @brief encryption base64加密中英文字符
@@ -228,6 +270,7 @@ private:
 
 private:
     static QJsonObject m_jsonObject;
+    static QLabel *m_label;
 };
 
 #endif // HELPCLASS_H
