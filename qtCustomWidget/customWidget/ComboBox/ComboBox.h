@@ -28,6 +28,7 @@
 
 #include <QWidget>
 #include <QComboBox>
+#include <ComboBoxItem.h>
 
 class QListWidgetItem;
 class QListWidget;
@@ -78,7 +79,8 @@ public:
 
     //设置当前comboBox选中的item名称，出来时候默认是空的
     void setCurrentItem(QString item);
-
+    //设置当前item文本
+    void setCurrentItemIndex(int index);
     //设置QComboBox的背景颜色
     void setBackgroundColor(QString color);
     //设置QComboBox的字体颜色
@@ -107,6 +109,8 @@ private :
     bool m_update = true;
     QListWidget * m_listwidget = nullptr;
     QRect m_rect;
+
+    QList<ComboBoxItem*> m_comboBoxItemList;
 };
 
 #endif // COMBOBOX_H

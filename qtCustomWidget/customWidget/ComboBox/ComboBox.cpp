@@ -1,7 +1,6 @@
 #include "ComboBox.h"
 #include <QPainter>
 #include <QListWidget>
-#include <ComboBoxItem.h>
 #include <QPaintEvent>
 #include<QDebug>
 #include "QNoFocusFrameDelegate.h"
@@ -64,6 +63,7 @@ void ComboBox::addItemTextData(QString text, int index)
 {
     if(m_listwidget != nullptr){
         ComboBoxItem* item = new ComboBoxItem(this);
+        m_comboBoxItemList.append(item);
         item->setItemText(text, index);
         //item->setImg(":/img/windows/close_b.png");
         if(index == 0)
@@ -79,6 +79,7 @@ void ComboBox::addItemIconTextData(const QString &text, const QString &LeftIcon,
 {
     if(m_listwidget != nullptr){
         ComboBoxItem* item = new ComboBoxItem(this);
+        m_comboBoxItemList.append(item);
         item->setItemText(text, index);
         item->setLeftIcon(LeftIcon, index, LeftIconsize);
         item->setRightIcon(RightIcon, index, RightIconsize);
@@ -96,6 +97,7 @@ void ComboBox::addItemLeftIconText(const QString &text, const QString &LeftIcon,
 {
     if(m_listwidget != nullptr){
         ComboBoxItem* item = new ComboBoxItem(this);
+        m_comboBoxItemList.append(item);
         item->setItemText(text, index);
         item->setLeftIcon(LeftIcon, index, size);
         //item->setImg(":/img/windows/close_b.png");
@@ -112,6 +114,7 @@ void ComboBox::addItemRightIconText(const QString &text, const QString &RightIco
 {
     if(m_listwidget != nullptr){
         ComboBoxItem* item = new ComboBoxItem(this);
+        m_comboBoxItemList.append(item);
         item->setItemText(text, index);
         item->setRightIcon(RightIcon, index, size);
         //item->setImg(":/img/windows/close_b.png");
@@ -129,6 +132,25 @@ void ComboBox::setCurrentItem(QString item)
 {
     m_currentItem = item;
 }
+
+void ComboBox::setCurrentItemIndex(int index)
+{
+     for(auto comboBoxItem:m_comboBoxItemList)
+     {
+         if(comboBoxItem)
+         {
+             int currentIndex = comboBoxItem->getCurrentIndex();
+             if(currentIndex == index)
+             {
+                 m_currentItem = comboBoxItem->getLabelString();
+                 this->setCurrentIndex(index);
+                 update();
+             }
+
+         }
+     }
+}
+
 
 void ComboBox::setBackgroundColor(QString color)
 {
@@ -152,7 +174,7 @@ void ComboBox::setInitStyleSheet(QString background)
 
     if(styleSheet.isEmpty())
     {
-        qInfo()<<"加载失败~";
+        qWarning()<<"ComboBox QSS 加载失败~";
     }
     this->setProperty("boxbackground", background);
     this->setStyleSheet(styleSheet);
@@ -176,8 +198,6 @@ void ComboBox::leaveEvent(QEvent *event)
      this->setCursor(Qt::ArrowCursor);
     event->accept();
 }
-
-
 
 void ComboBox::currentItemClicked_slot(QListWidgetItem *currentItem)
 {
