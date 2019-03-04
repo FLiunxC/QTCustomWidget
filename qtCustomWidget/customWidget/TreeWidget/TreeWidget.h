@@ -6,6 +6,43 @@
 * @author: Fu_Lin
 * @date:
 * @description:  用法简单，可随意更改显示结构和前缀图标
+* 用法实例：demo只嵌套2层，多层按照实例一样显示
+*    ui->treeWidget被提升为本类TreeWidget
+*   //首先拿掉默认属性
+*    ui->treeWidget->takeTreeWidgetDefaultProperty();
+*
+*  需要显示的数据
+    QStringList strList ={"A", "AA", "AAA", "AAAA"};  父数据
+    QStringList strChildList = {"BB","CC","DD","EE"}; 子数据
+    QStringList strChildListS = {"GG","FF","MM","ZZ"}; 子数据的子数据
+    for(auto str:strList)
+    {
+        //使用自定义item
+//        Item * item = new Item(ui->treeWidget);
+//        item->setLabelText(str);
+//      QTreeWidgetItem * treeitem = ui->treeWidget->addParentWidget(ui->treeWidget, item); 下面的就不写出来了
+
+      //使用原始的item文本设置，调用重载函数
+        QTreeWidgetItem * treeitem = ui->treeWidget->addParentWidget(ui->treeWidget, str);
+
+        //子孩子
+        for(auto strChild : strChildList)
+        {
+//            Item * childitem = new Item(ui->treeWidget);
+//             childitem->setLabelText(strChild);
+            //使用原始的item文本设置，调用重载函数
+            QTreeWidgetItem * childtreeitem =ui->treeWidget->addChildWidget(treeitem, strChild);
+            //子孩子的孩子
+            for(auto str:strChildListS)
+            {
+//                Item * childitems = new Item(ui->treeWidget);
+//                childitems->setLabelText(str);
+
+                //使用原始的item文本设置，调用重载函数
+                ui->treeWidget->addChildWidget(childtreeitem, str);
+            }
+        }
+    }
 */
 
 #include <QTreeWidget>
@@ -16,6 +53,45 @@ class TreeWidget : public QTreeWidget
     Q_OBJECT
 public:
     TreeWidget(QWidget * parent = nullptr);
+
+    /**
+     * @brief addParentWidget 设置父Item，也是第一层item
+     * @param parent 顶层item的父对象
+     * @param widgetItem 自定义的较复杂的Item
+     * @return 返回当前设置的父item
+     */
+    QTreeWidgetItem *addParentWidget(QWidget * parent, QWidget *  widgetItem);
+
+    /**
+     * @brief addParentWidget  重载函数，调用原生QTreeWidgetItem设置当前显示文本
+     * @param parent 顶层item的父对象
+     * @param text 需要显示的文本
+     * @param column 显示在第几列
+     * @param font 当前显示文本的字体参数
+     * @return 返回当前设置的父item
+     */
+    QTreeWidgetItem *addParentWidget(QWidget * parent,  QString text, int column = 0, QFont font =QFont("Microsoft Yahei",10));
+
+
+    /**
+     * @brief addChildWidget 设置子Item， 属于非第一层item
+     * @param parent  设置当前item的父对象，可以是顶层item和顶层item子孩子
+     * @param widgetItem 自定义的较复杂的item
+     * @return  返回当前设置的子item
+     */
+    QTreeWidgetItem *addChildWidget(QTreeWidgetItem * parent, QWidget *widgetItem);
+
+
+    /**
+     * @brief addChildWidget  重载函数，调用原生QTreeWidgetItem设置当前显示文本
+     * @param parent  设置当前item的父对象，可以是顶层item和顶层item子孩子
+     * @param text 当前显示的文本
+     * @param column 当前显示的是第几列
+     * @param font 当前显示文本的字体参数
+     * @return
+     */
+    QTreeWidgetItem *addChildWidget(QTreeWidgetItem * parent,  QString text, int column = 0, QFont font =QFont("Microsoft Yahei",10));
+
 
     /**
      * @brief takeTreeWidgetDefaultProperty 去掉默认的间隔，折叠图标, 表头

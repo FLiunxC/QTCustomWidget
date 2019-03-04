@@ -9,6 +9,66 @@ TreeWidget::TreeWidget(QWidget * parent):QTreeWidget(parent)
     connect(this, &TreeWidget::itemExpanded, this, &TreeWidget::onItemExpandedSlot);
 }
 
+QTreeWidgetItem * TreeWidget::addParentWidget(QWidget *parent, QWidget *widgetItem)
+{
+    QTreeWidget * treeParent = nullptr;
+    if(!parent)
+    {
+         treeParent = this;
+    }
+    else
+    {
+         treeParent = static_cast<QTreeWidget *>(parent);
+    }
+      QTreeWidgetItem *parentitem = new QTreeWidgetItem(treeParent);
+
+      addTopLevelItem(parentitem);
+      setItemWidget(parentitem, 0,widgetItem);
+
+      return parentitem;
+}
+
+QTreeWidgetItem *TreeWidget::addParentWidget(QWidget *parent, QString text, int column, QFont font)
+{
+    QTreeWidget * treeParent= nullptr;
+    if(!parent)
+    {
+         treeParent = this;
+    }
+    else
+    {
+         treeParent = static_cast<QTreeWidget *>(parent);
+    }
+
+     QTreeWidgetItem *parentitem = new QTreeWidgetItem(treeParent);
+     parentitem->setFont(column, font);
+     parentitem->setText(column, text);
+     addTopLevelItem(parentitem);
+
+     return parentitem;
+}
+
+ QTreeWidgetItem * TreeWidget::addChildWidget(QTreeWidgetItem *parent, QWidget *widgetItem)
+{
+    QTreeWidgetItem *childitem = new QTreeWidgetItem(parent);
+
+    parent->addChild(childitem);
+    setItemWidget(childitem, 0,widgetItem);
+
+    return childitem;
+ }
+
+ QTreeWidgetItem *TreeWidget::addChildWidget(QTreeWidgetItem *parent, QString text, int column, QFont font)
+ {
+     QTreeWidgetItem * childItem = new QTreeWidgetItem(parent);
+     childItem->setFont(column, font);
+     childItem->setText(column, text);
+
+     parent->addChild(childItem);
+
+     return childItem;
+ }
+
 void TreeWidget::takeTreeWidgetDefaultProperty()
 {
     //去掉父子间距
@@ -17,6 +77,12 @@ void TreeWidget::takeTreeWidgetDefaultProperty()
     this->setRootIsDecorated(false);
     //去掉表头
     this->setHeaderHidden(true);
+
+    this->setStyleSheet("QTreeView::branch:has-children:!has-siblings:closed,\
+                        QTreeView::branch:closed:has-children:has-siblings{border-image: none; image: none;}\
+                        QTreeView::branch:open:has-children:!has-siblings,\
+                        QTreeView::branch:open:has-children:has-siblings{border-image: none; image: none;}");
+
 }
 
 bool TreeWidget::isParent(QTreeWidgetItem *treeWidgetItem)
