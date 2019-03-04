@@ -90,7 +90,7 @@ public:
      * @param font 当前显示文本的字体参数
      * @return
      */
-    QTreeWidgetItem *addChildWidget(QTreeWidgetItem * parent,  QString text, int column = 0, QFont font =QFont("Microsoft Yahei",10));
+    QTreeWidgetItem *addChildWidget(QTreeWidgetItem * parent,  QString text, int column = 0, bool withUpper = false, QFont font =QFont("Microsoft Yahei",10));
 
 
     /**

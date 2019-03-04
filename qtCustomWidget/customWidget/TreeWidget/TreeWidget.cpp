@@ -40,13 +40,17 @@ QTreeWidgetItem *TreeWidget::addParentWidget(QWidget *parent, QString text, int 
          treeParent = static_cast<QTreeWidget *>(parent);
     }
 
-     QTreeWidgetItem *parentitem = new QTreeWidgetItem(treeParent);
-     parentitem->setFont(column, font);
-     parentitem->setText(column, text);
+    this->setColumnCount(column+1);
+
+    QTreeWidgetItem *parentitem = new QTreeWidgetItem(treeParent);
+
+    parentitem->setFont(column, font);
+    parentitem->setText(column, text);
      addTopLevelItem(parentitem);
 
+
      return parentitem;
-}
+ }
 
  QTreeWidgetItem * TreeWidget::addChildWidget(QTreeWidgetItem *parent, QWidget *widgetItem)
 {
@@ -58,9 +62,30 @@ QTreeWidgetItem *TreeWidget::addParentWidget(QWidget *parent, QString text, int 
     return childitem;
  }
 
- QTreeWidgetItem *TreeWidget::addChildWidget(QTreeWidgetItem *parent, QString text, int column, QFont font)
+ QTreeWidgetItem *TreeWidget::addChildWidget(QTreeWidgetItem *parent, QString text, int column, bool withUpper, QFont font)
  {
-     QTreeWidgetItem * childItem = new QTreeWidgetItem(parent);
+     static QTreeWidgetItem * beforechildItem = nullptr;
+     QTreeWidgetItem * childItem = nullptr;
+     if(!withUpper)
+    {
+          childItem = new QTreeWidgetItem(parent);
+          beforechildItem = childItem;
+     }
+     else
+     {
+         if(!beforechildItem)
+         {
+             qWarning()<<"TreeWidget beforechildItem is NULL!!!";
+             return childItem;
+         }
+         childItem = beforechildItem;
+     }
+
+     if(column > 0)
+     {
+         this->setColumnCount(column+1);
+     }
+
      childItem->setFont(column, font);
      childItem->setText(column, text);
 
