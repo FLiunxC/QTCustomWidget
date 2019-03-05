@@ -44,11 +44,13 @@ void PushButton::setButtonStyleSheet(QString backgroundColor)
                                 {   background-color:%1; \
                                     border-radius:3px;  \
                                     border: %4 solid %5; \
+                                    color:%1;  \
                                 } \
                                 QPushButton#pButtonOk:hover \
                                 { \
                                     color:%2;   \
                                     background-color:%3; \
+                                    color:%3;   \
                                     border-radius:3px;  \
                                     border: %4 solid %5; \
                                 } \
@@ -61,6 +63,7 @@ void PushButton::setButtonStyleSheet(QString backgroundColor)
                                     { \
                                     background-color:%1; \
                                     border-radius:3px;  \
+                                    color:%1;  \
                                     border:%2 solid %3;}").arg(backgroundColor, m_borderWide, m_borderColor);
     }
 
@@ -231,6 +234,7 @@ void PushButton::setFont(const QFont & font)
 
 void PushButton::setButtonText(const QString &text)
 {
+
      m_horizontalLayout->removeItem(m_HspacerItemEnd);
     //初始化ui
     if(m_buttonText == nullptr)
@@ -238,7 +242,6 @@ void PushButton::setButtonText(const QString &text)
         m_buttonText = new QLabel(this);
         m_buttonText->setObjectName("buttonText");
         m_buttonText->setText(this->text());
-
     }
 
     m_buttonText->setText(text);
@@ -248,6 +251,7 @@ void PushButton::setButtonText(const QString &text)
 
 void PushButton::setText(const QString &text)
 {
+
     setButtonText(text);
 }
 
@@ -344,15 +348,13 @@ void PushButton::enterEvent(QEvent *event)
 {
     if(m_hoverEnabled)
     {
-    this->setCursor(Qt::PointingHandCursor);
+        this->setCursor(Qt::PointingHandCursor);
+        emit sigEnter();
 
-    emit sigEnter();
-
-
-    //加延时是为了防止后续有其他horver信号时冲突
-    QTimer::singleShot(50, this,  [=] {emit sigHover(true);});
-
+        //加延时是为了防止后续有其他horver信号时冲突
+        QTimer::singleShot(50, this,  [=] {emit sigHover(true);});
     }
+
     event->accept();
 }
 

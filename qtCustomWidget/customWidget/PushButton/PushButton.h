@@ -150,7 +150,7 @@ private:
     QString m_leftIconSource = "" ; //左边图标的链接
     QString m_rightIconSource = "" ; //右边图标的链接
 
-    bool m_hoverEnabled  = true; //是否使能鼠标悬浮，默认时false
+    bool m_hoverEnabled  = true; //是否使能鼠标悬浮，默认时true
 
     //按钮布局三神器，提供动态布局伸缩
     QHBoxLayout * m_horizontalLayout = nullptr;
