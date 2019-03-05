@@ -6,7 +6,8 @@ TreeWidget::TreeWidget(QWidget * parent):QTreeWidget(parent)
     this->setObjectName("treeWidget");
 
 
-    connect(this, &TreeWidget::itemExpanded, this, &TreeWidget::onItemExpandedSlot);
+    connect(this, &TreeWidget::itemClicked, this, &TreeWidget::onItemExpandedSlot);
+    connect(this, &TreeWidget::itemDoubleClicked, this, &TreeWidget::onItemExpandedSlot);
 }
 
 QTreeWidgetItem * TreeWidget::addParentWidget(QWidget *parent, QWidget *widgetItem)
@@ -39,8 +40,6 @@ QTreeWidgetItem *TreeWidget::addParentWidget(QWidget *parent, QString text, int 
     {
          treeParent = static_cast<QTreeWidget *>(parent);
     }
-
-    this->setColumnCount(column+1);
 
     QTreeWidgetItem *parentitem = new QTreeWidgetItem(treeParent);
 
@@ -81,17 +80,17 @@ QTreeWidgetItem *TreeWidget::addParentWidget(QWidget *parent, QString text, int 
          childItem = beforechildItem;
      }
 
-     if(column > 0)
-     {
-         this->setColumnCount(column+1);
-     }
-
      childItem->setFont(column, font);
      childItem->setText(column, text);
 
      parent->addChild(childItem);
 
      return childItem;
+ }
+
+ void TreeWidget::setColumnNum(int column)
+ {
+     this->setColumnCount(column);
  }
 
 void TreeWidget::takeTreeWidgetDefaultProperty()
@@ -103,10 +102,7 @@ void TreeWidget::takeTreeWidgetDefaultProperty()
     //去掉表头
     this->setHeaderHidden(true);
 
-    this->setStyleSheet("QTreeView::branch:has-children:!has-siblings:closed,\
-                        QTreeView::branch:closed:has-children:has-siblings{border-image: none; image: none;}\
-                        QTreeView::branch:open:has-children:!has-siblings,\
-                        QTreeView::branch:open:has-children:has-siblings{border-image: none; image: none;}");
+    resetTreeViewStyle();
 
 }
 
@@ -124,9 +120,7 @@ bool TreeWidget::isParent(QTreeWidgetItem *treeWidgetItem)
 
 bool TreeWidget::isExpanded(QTreeWidgetItem *treeWidgetItem)
 {
-    int type = treeWidgetItem->type();
-
-    return type == 1?true:false;
+    return treeWidgetItem->isExpanded();
 }
 
 void TreeWidget::setRootDecorated(QString openIcon, QString closeIcon)
@@ -183,9 +177,16 @@ void TreeWidget::resetTreeViewStyle()
     qInfo()<<"进入treeview样式";
     QString styleSheetstr;
 
+    this->setObjectName("treeWidget");
     //整行拓展显示
     styleSheetstr = "QTreeView#treeWidget{  \
             show-decoration-selected: 1;}";
+
+//设置前缀图标消失
+styleSheetstr += "QTreeView::branch:has-children:!has-siblings:closed,\
+        QTreeView::branch:closed:has-children:has-siblings{border-image: none; image: none;}\
+        QTreeView::branch:open:has-children:!has-siblings,\
+        QTreeView::branch:open:has-children:has-siblings{border-image: none; image: none;}";
 
 //treeview的背景颜色设置
 styleSheetstr += QString("QTreeView{ \
@@ -194,9 +195,11 @@ styleSheetstr += QString("QTreeView{ \
 font-size: 16px; \
 outline:none;}").arg(m_TreeViewBackgroundColor);
 
-//    // 鼠标滑过
+//   鼠标滑过
 styleSheetstr += QString("QTreeView#treeWidget::item:hover, QTreeView#treeWidget::branch:hover {  \
                          background-color: %1;}").arg(m_TreeViewItemHoverColor);
+
+
 
 //鼠标选中
 styleSheetstr += QString("QTreeView::item:selected, QTreeView::branch:selected {  \
@@ -229,9 +232,28 @@ QTreeView#treeWidget::branch:!has-children:!has-siblings:adjoins-item { \
 this->setStyleSheet(styleSheetstr);
 }
 
-void TreeWidget::onItemExpandedSlot(QTreeWidgetItem *item)
+void TreeWidget::setSinglePointExpand(bool isSinglePoint)
 {
-    item->setToolTip(0, "1");
+    m_singlePointExpand = isSinglePoint;
+}
+
+void TreeWidget::onItemExpandedSlot(QTreeWidgetItem *item, int column)
+{
+    if(m_singlePointExpand)
+    {
+
+        if(item->isExpanded())
+        {
+               item->setExpanded(false);
+        }
+        else
+        {
+               item->setExpanded(true);
+        }
+
+
+    }
+    return;
 }
 
 void TreeWidget::onItemCollapsedSlot(QTreeWidgetItem *item)

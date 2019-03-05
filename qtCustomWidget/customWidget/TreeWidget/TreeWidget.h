@@ -88,10 +88,16 @@ public:
      * @param text 当前显示的文本
      * @param column 当前显示的是第几列
      * @param font 当前显示文本的字体参数
-     * @return
+     * @return 返回当前设置的子item
      */
     QTreeWidgetItem *addChildWidget(QTreeWidgetItem * parent,  QString text, int column = 0, bool withUpper = false, QFont font =QFont("Microsoft Yahei",10));
 
+
+    /**
+     * @brief setColumnCount 设置当前treeWidget的总共列数
+     * @param column 设置的列数
+     */
+    void setColumnNum(int column);
 
     /**
      * @brief takeTreeWidgetDefaultProperty 去掉默认的间隔，折叠图标, 表头
@@ -162,11 +168,15 @@ public:
     void setBranchEndIcon(QString branchEndIcon);
 
 
+    //设置是否单击点击展开
+    void setSinglePointExpand(bool isSinglePoint);
+
+
     //重置样式，包含点击，悬浮，背景颜色, 折叠小图标的重置
     void resetTreeViewStyle();
 
 private slots:
-    void onItemExpandedSlot(QTreeWidgetItem *item);
+    void onItemExpandedSlot(QTreeWidgetItem *item, int column);
     void onItemCollapsedSlot(QTreeWidgetItem *item);
 private:
     //前缀折叠图标显示
@@ -185,6 +195,7 @@ private:
 
     bool m_isBranchEnabled = false;  //分支引导显示图标是否使能，默认不显示引导图
 
+    bool m_singlePointExpand = true; //是否为单击展开，true为单击，false为双击点开
 };
 
 #endif // TREEWIDGET_H
