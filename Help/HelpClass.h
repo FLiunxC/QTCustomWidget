@@ -60,14 +60,6 @@ public:
     static bool isDirExist(QString fullPath);
 
     /**
-     * [AutoRunWithSystem 设置软件开机自启动]
-     * @param IsAutoRun [是否开机自启动]
-     * @param AppName   [运行的app名称]
-     * @param AppPath   [运行app路径]
-     */
-    static void AutoRunWithSystem(bool IsAutoRun, QString AppName, QString AppPath);
-
-    /**
      * @brief bytesToKB  字节 转换为B KB MB GB
      * @param bytes 需要转换的字节数
      * @return 转换成功的对应KB, 大小，默认保留两位小数
@@ -161,9 +153,9 @@ public:
 
    /**
     * @brief generalarrayJsonParse  通用的json数组解析方法 ,只能支持一级数组json解析，数组嵌套型的暂不支持
-    * @param jsonArray 需要解析的QJsonArray,由外面调用传入
-    * @param listJsonkepMap 需要解析的json中的Key值，首次传入，value应该为空，调用完成后，再根据key取出对应的value
-    * @param arrayKey 需要解析判断的json中的key值，如果判断不是数组类型，直接返回false，
+    * @param jsonDocument 需要解析的json,QJsonDocument,由外面调用传入
+    * @param listJsonkepMap 需要保存的json数组中的Key值，调用完成后，再根据key取出对应的value
+    * @param arrayKey 需要解析判断的json数组中的key值，如果判断不是数组类型，直接返回false，
     * @param headKey  json需要解析的头字段key，默认为code，如果code值不对，直接返回false，Map不做操作，code值请参考headValue
     * @param headValue  json需要解析的头字段key匹配的正确json返回值， 默认正确为0
     * @return

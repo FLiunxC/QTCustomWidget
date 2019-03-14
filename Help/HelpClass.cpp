@@ -587,7 +587,7 @@ void HelpClass::ToolTipmessage(QWidget *parent, QString message, QPoint point)
 {
     ToolTip tip(parent);
 
-    //显示时间为2秒
+    //显示时间为1.5秒
     tip.setToolTipDelay(1500);
 
     QEventLoop loop;
@@ -633,6 +633,7 @@ void HelpClass::showDialogText(QWidget *parent, QString showText, bool free)
             }
             m_label = nullptr;
         }
+        return;
     }
 
     if(m_label == nullptr)
@@ -661,7 +662,7 @@ void HelpClass::setGraphicsEffect(QWidget *parent)
     QNGraphicsEffect * bodyShadow = new QNGraphicsEffect(parent);
     bodyShadow->setBlurRadius(10.0);
     bodyShadow->setDistance(4.0);
-    bodyShadow->setColor(QColor(0, 0, 0, 10));
+    bodyShadow->setColor(QColor(0, 0, 0, 20));
     parent->setGraphicsEffect(bodyShadow);
 
 }
@@ -699,17 +700,4 @@ void HelpClass::setGlobalStyleSheet(const QString &qssFileName)
     qApp->setStyleSheet(qssFile);
 
     return;
-}
-
-void HelpClass::AutoRunWithSystem(bool IsAutoRun, QString AppName, QString AppPath)
-{
-    QSettings *reg = new QSettings(
-            "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-            QSettings::NativeFormat);
-
-        if (IsAutoRun) {
-            reg->setValue(AppName, AppPath);
-        } else {
-            reg->setValue(AppName, "");
-        }
 }
