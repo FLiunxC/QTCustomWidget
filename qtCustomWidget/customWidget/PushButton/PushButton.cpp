@@ -183,7 +183,7 @@ void PushButton::pressClickStyleSheet()
                                 }").arg(m_fontColor, m_borderWide, m_borderColor));
                                 */
 
-    m_horizontalLayout->setContentsMargins(4, 3, 0, 0);
+    m_horizontalLayout->setContentsMargins(3, 2, 0, 0);
 
 }
 
@@ -223,13 +223,13 @@ void PushButton::setDisabledFontColor(const QString &fontColor)
 {
     m_fontDisableColor = fontColor;
 
-     m_buttonText->setStyleSheet(QString("#buttonText{color:%1}").arg(m_fontDisableColor));
+    m_buttonText->setStyleSheet(QString("#buttonText{color:%1}").arg(m_fontDisableColor));
 
 }
 
 void PushButton::setFont(const QFont & font)
 {
-        m_buttonText->setFont(font);
+    m_buttonText->setFont(font);
 }
 
 void PushButton::setButtonText(const QString &text)
@@ -251,7 +251,6 @@ void PushButton::setButtonText(const QString &text)
 
 void PushButton::setText(const QString &text)
 {
-
     setButtonText(text);
 }
 
